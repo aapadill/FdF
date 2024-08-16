@@ -1,29 +1,36 @@
-NAME = FDF
+NAME	= FDF
+CFLAGS	= -Wextra -Wall -Werror #-Wunreachable-code -Ofast
+LIBFT	= ./libft
+LIBMLX	= ./MLX42
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -framework Cocoa -framework OpenGL -framework IOKit
+HEADERS	= -I ./include -I $(LIBMLX)/include
+LIBS	= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
+SRCS	= example.c
+OBJS	= ${SRCS:.c=.o}
 
-SRC_SOURCES = main.c #\
+all: libft libmlx $(NAME)
 
-SRC_OBJECTS = $(SRC_SOURCES:.c=.o)
+libft:
+	make -C $(LIBFT)
 
-all: $(NAME)
+libmlx:
+	cmake $(LIBMLX) -B $(LIBMLX)/build
+	make -C $(LIBMLX)/build -j4
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< build/libmlx42.a -Iinclude -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/"  -o $@
+	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
 
-$(NAME): $(SRC_OBJECTS)
-	$(MAKE) -C ./libft
-	$(CC) $(CFLAGS) -o $@ $^ ./libft/libft.a
+$(NAME): $(OBJS)
+	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
 
 clean:
-	rm -f $(SRC_OBJECTS)
-	$(MAKE) -C ./libft fclean
+	rm -rf $(OBJS)
+	rm -rf $(LIBMLX)/build
 
 fclean: clean
-	rm -f $(NAME)
+	make -C $(LIBFT) fclean
+	rm -rf $(NAME)
 
-re: fclean all
+re: clean all
 
-.PHONY: all clean fclean re
-
+.PHONY: all, clean, fclean, re, libmlx, libft
