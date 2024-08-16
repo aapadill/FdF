@@ -26,9 +26,9 @@ $(NAME): $(OBJS)
 clean:
 	rm -rf $(OBJS)
 	rm -rf $(LIBMLX)/build
+	make -C $(LIBFT) fclean
 
 fclean: clean
-	make -C $(LIBFT) fclean
 	rm -rf $(NAME)
 
 re: clean all
