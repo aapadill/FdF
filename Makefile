@@ -6,7 +6,7 @@ LIBMLX	= ./MLX42
 HEADERS	= -I ./include -I $(LIBMLX)/include
 LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
 SRCS	= example.c
-OBJS	= ${SRCS:.c=.o}
+OBJS	= $(SRCS:.c=.o)
 
 all: libft libmlx $(NAME)
 
