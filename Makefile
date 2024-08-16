@@ -4,7 +4,7 @@ LIBFT	= ./libft
 LIBMLX	= ./MLX42
 
 HEADERS	= -I ./include -I $(LIBMLX)/include
-LIBS	= $(LIBMLX)/build/libmlx42.a -ldl -lglfw -pthread -lm
+LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
 SRCS	= example.c
 OBJS	= ${SRCS:.c=.o}
 
