@@ -1,16 +1,25 @@
-NAME	= FDF
-CFLAGS	= -Wextra -Wall -Werror #-Wunreachable-code -Ofast
-LIBFT	= ./libft
-LIBMLX	= ./MLX42
+#relinking /build when make all many timesi, what the fuck with the naming? libftt, ft_printff (i did it because it wasnt working otherwise)
+#change to cc
+
+NAME		= fdf
+CC			= gcc
+CFLAGS		= -Wextra -Wall -Werror #-fsanitize=address -g -Wunreachable-code -Ofast
+FT_PRINTF	= ./ft_printf
+LIBFT		= ./libft
+LIBMLX		= ./MLX42
 
 HEADERS	= -I ./include -I $(LIBMLX)/include
-LIBS	= $(LIBFT)/libft.a $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
-SRCS	= example.c
+LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
+SRCS	=	map_parsing.c \
+			#example.c 
 OBJS	= $(SRCS:.c=.o)
 
-all: libft libmlx $(NAME)
+all: $(NAME)
 
-libft:
+ft_printff:
+	make -C $(FT_PRINTF)
+
+libftt:
 	make -C $(LIBFT)
 
 libmlx:
@@ -18,19 +27,20 @@ libmlx:
 	make -C $(LIBMLX)/build -j4
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS)
+	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) 
 
-$(NAME): $(OBJS)
-	$(CC) $(OBJS) $(LIBS) $(HEADERS) -o $(NAME)
+$(NAME): libftt ft_printff libmlx $(OBJS)
+	$(CC) $(OBJS) $(LIBFT)/libft.a $(FT_PRINTF)/libftprintf.a  $(LIBS) $(HEADERS) -o $(NAME)
 
 clean:
 	rm -rf $(OBJS)
 	rm -rf $(LIBMLX)/build
 	make -C $(LIBFT) fclean
+	make -C $(FT_PRINTF) fclean
 
 fclean: clean
 	rm -rf $(NAME)
 
 re: clean all
 
-.PHONY: all, clean, fclean, re, libmlx, libft
+.PHONY: re, fclean, clean, libmlx, ft_printff, libftt
