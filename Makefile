@@ -2,8 +2,8 @@
 #change to cc
 
 NAME		= fdf
-CC			= gcc
-CFLAGS		= -Wextra -Wall -Werror #-fsanitize=address -g -Wunreachable-code -Ofast
+CC			= cc
+CFLAGS		= -Wextra -Wall -Werror -g #-fsanitize=address -Wunreachable-code -Ofast
 FT_PRINTF	= ./ft_printf
 LIBFT		= ./libft
 LIBMLX		= ./MLX42
