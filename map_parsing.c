@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/08/29 01:52:04 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/08/29 10:19:43 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,31 @@ int	ft_perror(char *error_msg, int is_syscall)
 	exit(EXIT_FAILURE);
 }
 
+void	print_argv(char **argv)
+{
+	while(*argv)
+		ft_printf("\t%s", *argv++);
+	ft_printf("\n");
+}
+
+int	validate_map_values(char **values, int last)
+{
+	char	**x;
+	int		alpha;
+
+	while (*values && *values[last - 1] != '\n')
+	{
+		x = ft_split(*values, ',', &alpha);
+		if (alpha < 1 || alpha > 2 || int_overflows(x[0]))
+			ft_perror("Values error", 0);
+		printf("\n%s", x[0]);
+		if (alpha == 2)
+			printf("\t%s", x[1]);
+		*values++; //why is this segfaulting?
+	}
+	return (1);
+}
+
 int	validate_map_dimension(int fd)
 {
 	char	*line;
@@ -39,23 +64,17 @@ int	validate_map_dimension(int fd)
 	while (line != NULL)
 	{
 		values_x = ft_split(line, ' ', &words);
-		//ft_split(line, ' ', &words);
-		//while (*values_x)
-		//	ft_printf("\t%s", *values_x++);
-		//ft_printf("\n");
+		validate_map_values(values_x, words);
 		if (y == 0)
 			x = words - (*values_x[words-1] == '\n');
 		else
 			if (x != words - (*values_x[words-1] == '\n'))
 				ft_perror("Map error", 0);
-		ft_printf("x: %i\n", x);
 		y++;
 		line = get_next_line(fd);
 	}
-	//if (y != x)
-	//	ft_perror("Map error", 0);
 	printf("x: %i, y: %i\n", x, y);
-	return(1); //valid
+	return (1);
 }
 
 int	validate_inputs(int argc, char **argv)
