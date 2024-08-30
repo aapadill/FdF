@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/08/29 13:29:28 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:37:06 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,34 +26,41 @@ int	ft_perror(char *error_msg, int is_syscall)
 	exit(EXIT_FAILURE);
 }
 
-void	print_argv(char **argv)
-{
-	while(*argv)
-		ft_printf("\t%s", *argv++);
-	ft_printf("\n");
-}
-
 int	validate_map_values(char **values)
 {
 	char	**x;
 	int		alpha;
-	int		counter;
+	//int		counter;
 
-	counter = 0;
+	//counter = 0;
 	while (*values)
 	{
-		counter++;
+		//counter++;
 		x = ft_split(*values++, ',', &alpha);
-		if (alpha < 1 || alpha > 2)// || int_overflows(x[0]))
+		if (alpha < 1 || alpha > 2 || int_overflows(x[0]))
 			ft_perror("Values error", 0);
-		//if (*x[0] != '\n' && counter++)
-		printf("\n");
-		printf("%s, counter: %i", x[0], counter);
-		if (alpha == 2)
-			printf("\t%s", x[1]);
-		//*values++;
+		//printf("\n");
+		//printf("%s, elem: %i", x[0], counter);
+		//if (alpha == 2)
+			//printf("\t%s", x[1]);
 	}
 	return (1);
+}
+
+void	clean(char *line)
+{
+	char	*next_line;
+	int		len;
+
+	next_line = ft_strchr(line, '\n');
+	if (next_line)
+		*next_line = '\0';
+	len = ft_strlen(line);
+	while (len && line[len - 1] == ' ')
+	{
+		line[len - 1] = '\0';
+		len--;
+	}
 }
 
 int	validate_map_dimension(int fd)
@@ -65,18 +72,21 @@ int	validate_map_dimension(int fd)
 	char	**values_x;
 
 	y = 0;
-	line = get_next_line(fd);
-	while (line != NULL)
+	while (1)
 	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		clean(line);
 		values_x = ft_split(line, ' ', &words);
 		validate_map_values(values_x);
+		//printf("\n--next-y-value--");
 		if (y == 0)
-			x = words - (*values_x[words-1] == '\n');
+			x = words;
 		else
-			if (x != words - (*values_x[words-1] == '\n'))
+			if (x != words)
 				ft_perror("Map error", 0);
 		y++;
-		line = get_next_line(fd);
 	}
 	printf("x: %i, y: %i\n", x, y);
 	return (1);
