@@ -9,9 +9,11 @@ LIBFT		= ./libft
 LIBMLX		= ./MLX42
 
 HEADERS	= -I ./include -I $(LIBMLX)/include
+
 LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
-SRCS	=	map_parsing.c \
-			#example.c 
+
+SRCS	= fdf_utils.c map_parsing.c main.c
+
 OBJS	= $(SRCS:.c=.o)
 
 all: $(NAME)
