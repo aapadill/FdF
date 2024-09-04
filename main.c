@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/04 07:44:55 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/04 14:29:36 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static void error(void)
 	exit(EXIT_FAILURE);
 }
 
-/*
-static void print_map(t_cell **map, int x, int y)
+//static void print_map(t_cell **map, int x, int y)
+static void print_map(t_cell **map, int x, int y, mlx_image_t *img)
 {
 	int j;
 	int i;
@@ -30,17 +30,15 @@ static void print_map(t_cell **map, int x, int y)
 	j = -1;
 	while (++j < y)
 	{
-		printf("\n");
 		i = -1;
 		while (++i < x)
-			printf("%li ", map[j][i].alpha);
+		{
+			//printf("%li ", map[j][i].alpha);
+			if (map[j][i].alpha)
+				*(img->pixels + (j * img->width + i) * 4) = map[j][i].alpha;
+		}
 	}
 }
-void paint_map(mlx_image_t *img)
-{
-	while
-}
-*/
 
 int main(int argc, char **argv)
 {
@@ -72,11 +70,15 @@ int main(int argc, char **argv)
 	ft_memset(img->pixels, 255, img->width * img->height * sizeof(int32_t));
 
 	//map
-
+	print_map(map, x, y, img);
 
 	//display instance
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		error();
+
+	//scale?
+	img->instances[0].x += 200;
+	img->instances[0].y += 200;
 
 	mlx_loop(mlx);
 
