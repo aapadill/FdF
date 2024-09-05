@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/03 13:35:20 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:07:17 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	insert_values(t_cell **map, char **x_values, int y)
 		if (alpha - 1) //1 -> z value, 2 -> alpha value
 			map[y][i].alpha = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
 		else
-			map[y][i].alpha = 0; //default color
+			map[y][i].alpha = 255; //default color
 		i++;
 	}
 	return (1);
