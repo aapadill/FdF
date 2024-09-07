@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/07 12:04:52 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/07 18:29:54 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,14 @@ int	round_value(float value)
 void	project_point(t_pixel **proj, int i, int j, int z)
 {
 	//isometric projection
-	proj[j][i].x = (i - j) * cos(M_PI / 6);
-	proj[j][i].y = (i + j) * sin(M_PI / 6) - z;
+	proj[j][i].x = (i - j) * cos(M_PI / 6); //30deg
+	proj[j][i].y = (i + j) * sin(M_PI / 6) - z; //30deg
+}
 
-	proj[j][i].x *= 1;
-	proj[j][i].y *= 1;
+void	scale(t_pixel **proj, int i, int j)
+{
+	proj[j][i].x *= 5;
+	proj[j][i].y *= 5;
 }
 
 void	translate(t_pixel **proj, int i, int j)
@@ -99,19 +102,22 @@ static void print_map(t_cell **map, mlx_image_t *img, int x, int y)
 		while (++i < x)
 		{
 			project_point(proj, i, j, map[j][i].z);
+			scale(proj, i, j);
 			translate(proj, i, j);
-			if (proj[j][i].y < 0)
+			if (proj[j][i].y < 0 || proj[j][i].x < 0) //not doing the job?
 				continue ;
 			mlx_put_pixel(img, proj[j][i].x, proj[j][i].y, map[j][i].alpha);
 			if (i + 1 < x)
 			{
 				project_point(proj, i + 1, j, map[j][i + 1].z);
+				scale(proj, i + 1, j);
 				translate(proj, i + 1, j);
 				bresenham(img, &proj[j][i], &proj[j][i + 1], map[j][i].alpha);
 			}
 			if (j + 1 < y)
 			{
 				project_point(proj, i, j + 1, map[j + 1][i].z);
+				scale(proj, i, j + 1);
 				translate(proj, i, j + 1);
 				bresenham(img, &proj[j][i], &proj[j + 1][i], map[j][i].alpha);
 			}

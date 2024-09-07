@@ -1,5 +1,4 @@
 #relinking /build when make all many timesi, what the fuck with the naming? libftt, ft_printff (i did it because it wasnt working otherwise)
-#change to cc
 
 NAME		= fdf
 CC			= cc
@@ -10,7 +9,7 @@ LIBMLX		= ./MLX42
 
 HEADERS	= -I ./include -I $(LIBMLX)/include
 
-LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl -pthread -lm
+LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" -pthread -lm #ldl
 
 SRCS	= fdf_utils.c map_parsing.c main.c
 
