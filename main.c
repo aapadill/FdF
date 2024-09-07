@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/05 21:01:54 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/07 12:02:01 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,43 +26,95 @@ static void error(void)
 	exit(EXIT_FAILURE);
 }
 
+int	round_value(float value)
+{
+	return ((int)(value + 0.5));
+}
+
+void	project_point(t_pixel **proj, int i, int j, int z)
+{
+	//isometric projection
+	proj[j][i].x = (i - j) * cos(M_PI / 6);
+	proj[j][i].y = (i + j) * sin(M_PI / 6) - z;
+
+	proj[j][i].x *= 1;
+	proj[j][i].y *= 1;
+}
+
+void	translate(t_pixel **proj, int i, int j)
+{
+	//hardcored translation
+	proj[j][i].x = round_value(proj[j][i].x + (WIDTH / 2));
+	proj[j][i].y = round_value(proj[j][i].y + (HEIGHT / 4));
+}
+
+void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, int color)
+{
+	int x = (int)(start->x);
+	int y = (int)(start->y);
+	int x2 = (int)(end->x);
+	int y2 = (int)(end->y);
+
+	int dx = abs(x2 - x);
+	int dy = abs(y2 - y);
+	int sx = (x < x2) ? 1 : -1;
+	int sy = (y < y2) ? 1 : -1;
+	int err = dx - dy;
+
+	int e2;
+
+	while (1)
+	{
+		// Draw pixel at (x, y)
+		mlx_put_pixel(img, x, y, color);
+		// Exit condition
+		if (x == x2 && y == y2)
+			break;
+		e2 = 2 * err;
+		if (e2 > -dy)
+		{
+			err -= dy;
+			x += sx;
+		}
+		if (e2 < dx)
+		{
+			err += dx;
+			y += sy;
+		}
+	}
+}
+
 static void print_map(t_cell **map, mlx_image_t *img, int x, int y)
 {
-	int j;
-	int i;
-	float x_prime;
-	float y_prime;
-	int screen_x;
-	int screen_y;
-	float step_x;
-	float step_y;
+	int		j;
+	int		i;
+	t_pixel	**proj;
 
-	step_x = img->width / (x + y); //assuming cuadratic maps?
-	step_y = img->height / (x + y); //same
+	proj = init_img(x, y);
+	//error handling
 	j = -1;
 	while (++j < y)
 	{
 		i = -1;
 		while (++i < x)
 		{
-			//isometric projection
-			x_prime = (i - j) * cos(M_PI / 6); //cos(30deg)
-			y_prime = (i + j) * sin(M_PI / 6) - map[j][i].z; //sin(30deg)
-
-			//hardcored scale
-			x_prime *= step_x; //hardcored
-			y_prime *= step_y; //hardcored
-
-			//hardcored translation
-			x_prime += img->width / 2;
-			y_prime += img->height / 2;
-
-			//rounding decimal px to integer px
-			screen_x = (int)(x_prime + 0.5);
-			screen_y = (int)(y_prime + 0.5);
-			if (map[j][i].alpha)
-				mlx_put_pixel(img, screen_x, screen_y, map[j][i].alpha);
-				//*(img->pixels + (j * img->width + i) * 4) = map[j][i].alpha;
+			project_point(proj, i, j, map[j][i].z);
+			translate(proj, i, j);
+			if (proj[j][i].y < 0)
+				continue ;
+			mlx_put_pixel(img, proj[j][i].x, proj[j][i].y, map[j][i].alpha);
+			if (i + 1 < x)
+			{
+				project_point(proj, i + 1, j, map[j][i + 1].z);
+				translate(proj, i + 1, j);
+				bresenham(img, &proj[j][i], &proj[j][i + 1], map[j][i].alpha);
+			}
+			if (j + 1 < y)
+			{
+				project_point(proj, i, j + 1, map[j + 1][i].z);
+				translate(proj, i, j + 1);
+				bresenham(img, &proj[j][i], &proj[j + 1][i], map[j][i].alpha);
+			}
 		}
 	}
 }
@@ -81,10 +133,9 @@ int main(int argc, char **argv)
 		ft_perror("No valid arguments", 0);
 	map = validate_map(argv, &x, &y);
 	fill_map(map, argv);
-	//print_map(map, x, y);
 
 	//window
-	mlx = mlx_init(WIDTH, HEIGHT, "first try", true);
+	mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
 	if (!mlx)
 		error();
 
@@ -103,7 +154,7 @@ int main(int argc, char **argv)
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		error();
 
-	//scale?
+	//img translate
 	img->instances[0].x += 0;
 	img->instances[0].y += 0;
 

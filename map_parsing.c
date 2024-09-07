@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/05 11:07:17 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/06 22:21:18 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,32 @@ t_cell	**init_map(int x, int y)
 		i++;
 	}
 	return (map);
+}
+
+t_pixel	**init_img(int x, int y)
+{
+	t_pixel	**img;
+	int i;
+
+	i = 0;
+	img = (t_pixel **)malloc(sizeof(t_pixel *) * y);
+	if (!img)
+		ft_perror("Malloc error for img", 1);
+	while (i < y)
+	{
+		img[i] = (t_pixel *)malloc(sizeof(t_pixel) * x);
+		if (!img[i])
+		{
+			while (--i >= 0)
+				free(img[i]);
+			free(img);
+			ft_perror("Malloc error for a row", 1);
+		}
+		//you could technically also insert initial values here (zeros?)
+		//initialize alpha channel maybe?
+		i++;
+	}
+	return (img);
 }
 
 int	validate_values(char **values)
@@ -104,8 +130,13 @@ int	insert_values(t_cell **map, char **x_values, int y)
 		map[y][i].z = ft_atoi(z[0]);
 		if (alpha - 1) //1 -> z value, 2 -> alpha value
 			map[y][i].alpha = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
-		else
-			map[y][i].alpha = 255; //default color
+		//else
+		//{
+		//	if (!map[y][i].z) //hardcoded to differentiate height, replace this...
+		//		map[y][i].alpha = 65536; //for a proper gradient color function.
+			else
+				map[y][i].alpha = 4294967295; //default color
+		//}
 		i++;
 	}
 	return (1);
