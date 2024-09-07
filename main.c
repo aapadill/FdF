@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/07 12:02:01 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/07 12:04:52 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,9 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, int color)
 
 	while (1)
 	{
-		// Draw pixel at (x, y)
+		//draw pixel at (x, y)
 		mlx_put_pixel(img, x, y, color);
-		// Exit condition
+		//exit condition
 		if (x == x2 && y == y2)
 			break;
 		e2 = 2 * err;
