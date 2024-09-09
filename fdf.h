@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/06 16:53:08 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/09 14:40:34 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,22 @@
 
 typedef struct s_cell
 {
-	int		z;
-	long	alpha;
+	int					z;
+	unsigned long	color;
 }	t_cell;
+
+typedef struct s_map
+{
+	int		x;
+	int		y;
+	t_cell	**cells;
+}	t_map;
 
 typedef struct s_pixel
 {
-	float	x;
-	float	y;
-	long	alpha;
+	float			x;
+	float			y;
+	unsigned long	color;
 }	t_pixel;
 
 int		ft_perror(char *error_msg, int is_syscall);

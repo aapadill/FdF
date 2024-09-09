@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/06 22:21:18 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/09 14:15:06 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_pixel	**init_img(int x, int y)
 			ft_perror("Malloc error for a row", 1);
 		}
 		//you could technically also insert initial values here (zeros?)
-		//initialize alpha channel maybe?
+		//initialize color channel maybe?
 		i++;
 	}
 	return (img);
@@ -66,24 +66,24 @@ t_pixel	**init_img(int x, int y)
 int	validate_values(char **values)
 {
 	char	**z;
-	int		alpha;
+	int		color;
 	//int		prev;
 
 	//prev = 0;
 	while (*values)
 	{
-		z = ft_split(*values++, ',', &alpha);
+		z = ft_split(*values++, ',', &color);
 		if (!z)
 			ft_perror("Malloc error (z split)", 1);
-		if (alpha < 1 || alpha > 2 || int_overflows(z[0]))
+		if (color < 1 || color > 2 || int_overflows(z[0]))
 			ft_perror("Values format error", 0);
 		//if (!prev)
-		//	prev = alpha;
-		//else if (prev != alpha)
-		//	ft_perror("Inconsistent alpha channel values", 0);
+		//	prev = color;
+		//else if (prev != color)
+		//	ft_perror("Inconsistent color channel values", 0);
 		//if you had a map, you could technically insert values here
 	}
-	return (alpha - 1);
+	return (color - 1);
 }
 
 t_cell	**validate_map(char **argv, int *x, int *y)
@@ -104,7 +104,7 @@ t_cell	**validate_map(char **argv, int *x, int *y)
 		splitted_line = ft_split(clean(line), ' ', &values);
 		if (!splitted_line)
 			ft_perror("Malloc error (x split)", 1);
-		validate_values(splitted_line); //returns alpha
+		validate_values(splitted_line); //returns color
 		if (!*y)
 			*x = values;
 		else if (*x != values)
@@ -119,24 +119,19 @@ int	insert_values(t_cell **map, char **x_values, int y)
 {
 	int		i;
 	char	**z;
-	int		alpha;
+	int		color;
 
 	i = 0;
 	while (x_values[i])
 	{
-		z = ft_split(x_values[i], ',', &alpha);
+		z = ft_split(x_values[i], ',', &color);
 		if (!z)
 			ft_perror("Malloc error (z split)", 1);
 		map[y][i].z = ft_atoi(z[0]);
-		if (alpha - 1) //1 -> z value, 2 -> alpha value
-			map[y][i].alpha = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
-		//else
-		//{
-		//	if (!map[y][i].z) //hardcoded to differentiate height, replace this...
-		//		map[y][i].alpha = 65536; //for a proper gradient color function.
-			else
-				map[y][i].alpha = 4294967295; //default color
-		//}
+		if (color - 1)
+			map[y][i].color = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
+		else
+			map[y][i].color = 4294967295; //default color
 		i++;
 	}
 	return (1);

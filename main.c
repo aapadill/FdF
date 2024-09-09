@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/07 18:29:54 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/09 14:14:10 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	round_value(float value)
 	return ((int)(value + 0.5));
 }
 
-void	project_point(t_pixel **proj, int i, int j, int z)
+void	project(t_pixel **proj, int i, int j, int z)
 {
 	//isometric projection
 	proj[j][i].x = (i - j) * cos(M_PI / 6); //30deg
@@ -101,25 +101,25 @@ static void print_map(t_cell **map, mlx_image_t *img, int x, int y)
 		i = -1;
 		while (++i < x)
 		{
-			project_point(proj, i, j, map[j][i].z);
+			project(proj, i, j, map[j][i].z);
 			scale(proj, i, j);
 			translate(proj, i, j);
-			if (proj[j][i].y < 0 || proj[j][i].x < 0) //not doing the job?
+			if (proj[j][i].y < 0 || proj[j][i].x < 0)
 				continue ;
-			mlx_put_pixel(img, proj[j][i].x, proj[j][i].y, map[j][i].alpha);
+			mlx_put_pixel(img, proj[j][i].x, proj[j][i].y, map[j][i].color);
 			if (i + 1 < x)
 			{
-				project_point(proj, i + 1, j, map[j][i + 1].z);
+				project(proj, i + 1, j, map[j][i + 1].z);
 				scale(proj, i + 1, j);
 				translate(proj, i + 1, j);
-				bresenham(img, &proj[j][i], &proj[j][i + 1], map[j][i].alpha);
+				bresenham(img, &proj[j][i], &proj[j][i + 1], map[j][i].color);
 			}
 			if (j + 1 < y)
 			{
-				project_point(proj, i, j + 1, map[j + 1][i].z);
+				project(proj, i, j + 1, map[j + 1][i].z);
 				scale(proj, i, j + 1);
 				translate(proj, i, j + 1);
-				bresenham(img, &proj[j][i], &proj[j + 1][i], map[j][i].alpha);
+				bresenham(img, &proj[j][i], &proj[j + 1][i], map[j][i].color);
 			}
 		}
 	}
