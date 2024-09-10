@@ -6,35 +6,35 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/09 14:15:06 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/09 18:57:07 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_cell	**init_map(int x, int y)
+t_cell	**init_cells(int x, int y)
 {
-	t_cell	**map;
+	t_cell	**cells;
 	int i;
 
 	i = 0;
-	map = (t_cell **)malloc(sizeof(t_cell *) * y);
-	if (!map)
-		ft_perror("Malloc error for map", 1);
+	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
+	if (!cells)
+		ft_perror("Malloc error for cells", 1);
 	while (i < y)
 	{
-		map[i] = (t_cell *)malloc(sizeof(t_cell) * x);
-		if (!map[i])
+		cells[i] = (t_cell *)malloc(sizeof(t_cell) * x);
+		if (!cells[i])
 		{
 			while (--i >= 0)
-				free(map[i]);
-			free(map);
+				free(cells[i]);
+			free(cells);
 			ft_perror("Malloc error for a row", 1);
 		}
 		//you could technically also insert initial values here (zeros?)
 		i++;
 	}
-	return (map);
+	return (cells);
 }
 
 t_pixel	**init_img(int x, int y)
@@ -67,9 +67,7 @@ int	validate_values(char **values)
 {
 	char	**z;
 	int		color;
-	//int		prev;
 
-	//prev = 0;
 	while (*values)
 	{
 		z = ft_split(*values++, ',', &color);
@@ -77,16 +75,12 @@ int	validate_values(char **values)
 			ft_perror("Malloc error (z split)", 1);
 		if (color < 1 || color > 2 || int_overflows(z[0]))
 			ft_perror("Values format error", 0);
-		//if (!prev)
-		//	prev = color;
-		//else if (prev != color)
-		//	ft_perror("Inconsistent color channel values", 0);
 		//if you had a map, you could technically insert values here
 	}
 	return (color - 1);
 }
 
-t_cell	**validate_map(char **argv, int *x, int *y)
+t_cell	**validate_file(char **argv, int *x, int *y)
 {
 	int		fd;
 	char	*line;
@@ -108,14 +102,15 @@ t_cell	**validate_map(char **argv, int *x, int *y)
 		if (!*y)
 			*x = values;
 		else if (*x != values)
-			ft_perror("Map error (your map is missing some x values)", 0);
+			ft_perror("Map error (your file is missing some x values)", 0);
 		(*y)++;
 	}
 	close(fd);
-	return (init_map(*x, *y));
+	return (init_cells(*x, *y));
 }
 
-int	insert_values(t_cell **map, char **x_values, int y)
+//int	insert_values(t_cell **cells, char **x_values, int y)
+int	insert_values(t_map	*map, char **x_values, int y)
 {
 	int		i;
 	char	**z;
@@ -127,17 +122,26 @@ int	insert_values(t_cell **map, char **x_values, int y)
 		z = ft_split(x_values[i], ',', &color);
 		if (!z)
 			ft_perror("Malloc error (z split)", 1);
-		map[y][i].z = ft_atoi(z[0]);
+		map->cells[y][i].z = ft_atoi(z[0]);
+		if (!i && !y)
+		{
+			map->z_min = map->cells[0][0].z;
+			map->z_max = map->cells[0][0].z;
+		}
+		if (map->cells[y][i].z < map->z_min)
+			map->z_min = map->cells[y][i].z;
+		if (map->cells[y][i].z > map->z_min)
+			map->z_min = map->cells[y][i].z;
 		if (color - 1)
-			map[y][i].color = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
+			map->cells[y][i].color = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
 		else
-			map[y][i].color = 4294967295; //default color
+			map->cells[y][i].color = 4294967295; //default color
 		i++;
 	}
 	return (1);
 }
 
-void	fill_map(t_cell **map, char **argv)
+void	fill_cells(t_map *map, char **argv)
 {
 	int		fd;
 	char	*line;
