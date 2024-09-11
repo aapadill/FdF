@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/11 01:05:19 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/11 20:04:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <stdint.h> //erase?
 # include <math.h>
 # include <MLX42/MLX42.h>
-# define WIDTH 1024
-# define HEIGHT 1024
+# define WIDTH 512
+# define HEIGHT 512
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -31,8 +31,8 @@
 
 typedef struct s_cell
 {
-	int					z;
-	unsigned long	color;
+	int			z;
+	uint32_t	color;
 }	t_cell;
 
 typedef struct s_map
@@ -48,7 +48,7 @@ typedef struct s_pixel
 {
 	float			x;
 	float			y;
-	unsigned long	color;
+	uint32_t	color;
 }	t_pixel;
 
 typedef struct s_image

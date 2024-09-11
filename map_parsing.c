@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/10 22:37:28 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/11 16:22:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void init_img(t_img *img, t_map *map)
 	int h;
 	int i;
 
-	h = -1;
 	i = -1;
 	img->x = map->x;
 	img->y = map->y;
@@ -51,6 +50,7 @@ void init_img(t_img *img, t_map *map)
 		ft_perror("Malloc error for img->pixels", 1); //free img->pixels
 	while (++i < img->y)
 	{
+		h = -1;
 		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
 		if (!img->pixels[i])
 		{
@@ -131,12 +131,12 @@ int	insert_values(t_map	*map, char **x_values, int y)
 		}
 		if (map->cells[y][i].z < map->z_min)
 			map->z_min = map->cells[y][i].z;
-		if (map->cells[y][i].z > map->z_min)
-			map->z_min = map->cells[y][i].z;
+		if (map->cells[y][i].z > map->z_max)
+			map->z_max = map->cells[y][i].z;
 		if (color - 1)
 			map->cells[y][i].color = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
 		else
-			map->cells[y][i].color = 4294967295; //default color
+			map->cells[y][i].color = 0; //default color
 		i++;
 	}
 	return (1);

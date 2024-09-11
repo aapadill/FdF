@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/11 03:20:29 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/11 21:47:18 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,18 +77,16 @@ static void scale_img(t_img *img, int s)
 	img->max_x *= s;
 	img->min_y *= s;
 	img->max_y *= s;
-	img->width *= s; //+ 20 is padding, 10 each side
-	img->height *= s; //+ 20 is padding, 10 each side
+	img->width *= s;
+	img->height *= s;
 	j = -1;
 	while (++j < img->y)
 	{
 		i = -1;
 		while (++i < img->x)
 		{
-			img->pixels[j][i].x *= s;
-			img->pixels[j][i].y *= s;
-			img->pixels[j][i].x = round_value(img->pixels[j][i].x);
-			img->pixels[j][i].y = round_value(img->pixels[j][i].y);
+			img->pixels[j][i].x = round_value(img->pixels[j][i].x * s);
+			img->pixels[j][i].y = round_value(img->pixels[j][i].y * s);
 		}
 	}
 }
@@ -100,8 +98,8 @@ static void translate_img(t_img *img, int t)
 	int		x_offset;
 	int		y_offset;
 
-	x_offset = img->width / 2; //(WIDTH - img->width) / 2;
-	y_offset = img->height / 2; //(HEIGHT - img->height) / 2;
+	x_offset = round_value(img->width / 2);
+	y_offset = round_value(img->height / 2);
 	j = -1;
 	while (++j < img->y)
 	{
@@ -125,16 +123,22 @@ static void print_img(mlx_image_t *mlx_img, t_img *img)
 		i = -1;
 		while (++i < img->x)
 		{
+			printf("x->%i, y->%i\n", i, j);
 			if (i + 1 < img->x)
 				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1]);
 			if (j + 1 < img->y)
 				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i]);
-			//mlx_put_pixel(mlx_img, x, y, color);
 		}
 	}
 }
 
-int main(int argc, char **argv)
+void my_keyhook(mlx_key_data_t keydata, void *param)
+{
+	if (keydata.key == MLX_KEY_T && keydata.action == MLX_PRESS)
+		translate_img(param, 10);
+}
+
+void all(int argc, char **argv)
 {
 	t_map		map;
 	t_img		*transformed;
@@ -168,20 +172,45 @@ int main(int argc, char **argv)
 	if (round_value(HEIGHT / transformed->height) < s)
 		s = round_value(HEIGHT / transformed->height);
 	scale_img(transformed, s);
-	translate_img(transformed, 0);
+	translate_img(transformed, 10); //hardcoded, z_max makes some maps go negative
 	print_img(img, transformed);
+
+	//hook
+	//mlx_key_hook(mlx, &my_keyhook, transformed);
 
 	//display instance
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		error();
 
 	//img translate
-	img->instances[0].x += 0;
-	img->instances[0].y += 0;
+	//img->instances[0].x += 0;
+	//img->instances[0].y += 0;
 
 	mlx_loop(mlx);
-
 	mlx_delete_image(mlx, img);
 	mlx_terminate(mlx);
+}
+
+/*
+void all_keyhook(mlx_key_data_t keydata, mlx_t *mlx)
+{
+	if (keydata.key == MLX_KEY_P && keydata.action == MLX_PRESS)
+		all(argc, argv);
+}
+*/
+
+int main(int argc, char **argv)
+{
+	//mlx_t		*mlx;
+
+	//window
+	//mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
+	//if (!mlx)
+	//	error();
+
+	//mlx_key_hook(mlx, &all_keyhook, NULL);
+	//mlx_terminate(mlx);
+
+	all(argc, argv);
 	return (EXIT_SUCCESS);
 }
