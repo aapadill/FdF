@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/09 18:57:07 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/10 22:37:28 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_cell	**init_cells(int x, int y)
 	i = 0;
 	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
 	if (!cells)
-		ft_perror("Malloc error for cells", 1);
+		ft_perror("Malloc error for cells", 1); //free cells
 	while (i < y)
 	{
 		cells[i] = (t_cell *)malloc(sizeof(t_cell) * x);
@@ -37,30 +37,31 @@ t_cell	**init_cells(int x, int y)
 	return (cells);
 }
 
-t_pixel	**init_img(int x, int y)
+void init_img(t_img *img, t_map *map)
 {
-	t_pixel	**img;
+	int h;
 	int i;
 
-	i = 0;
-	img = (t_pixel **)malloc(sizeof(t_pixel *) * y);
-	if (!img)
-		ft_perror("Malloc error for img", 1);
-	while (i < y)
+	h = -1;
+	i = -1;
+	img->x = map->x;
+	img->y = map->y;
+	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
+	if (!img->pixels)
+		ft_perror("Malloc error for img->pixels", 1); //free img->pixels
+	while (++i < img->y)
 	{
-		img[i] = (t_pixel *)malloc(sizeof(t_pixel) * x);
-		if (!img[i])
+		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
+		if (!img->pixels[i])
 		{
 			while (--i >= 0)
-				free(img[i]);
-			free(img);
-			ft_perror("Malloc error for a row", 1);
+				free(img->pixels[i]);
+			free(img->pixels);
+			ft_perror("Malloc error for a pixels row", 1);
 		}
-		//you could technically also insert initial values here (zeros?)
-		//initialize color channel maybe?
-		i++;
+		while (++h < img->x)
+			img->pixels[i][h].color = map->cells[i][h].color;
 	}
-	return (img);
 }
 
 int	validate_values(char **values)
