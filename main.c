@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/11 03:11:25 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/11 03:20:29 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,12 @@ static void scale_img(t_img *img, int s)
 		{
 			img->pixels[j][i].x *= s;
 			img->pixels[j][i].y *= s;
-			img->pixels[j][i].x = round_value(img->pixels[j][i].x) + img->width / 2;
-			img->pixels[j][i].y = round_value(img->pixels[j][i].y) + img->height / 2;
+			img->pixels[j][i].x = round_value(img->pixels[j][i].x);
+			img->pixels[j][i].y = round_value(img->pixels[j][i].y);
 		}
 	}
 }
 
-/*
 static void translate_img(t_img *img, int t)
 {
 	int		j;
@@ -101,8 +100,8 @@ static void translate_img(t_img *img, int t)
 	int		x_offset;
 	int		y_offset;
 
-	x_offset = (WIDTH - img->width) / 2;
-	y_offset = (HEIGHT - img->height) / 2;
+	x_offset = img->width / 2; //(WIDTH - img->width) / 2;
+	y_offset = img->height / 2; //(HEIGHT - img->height) / 2;
 	j = -1;
 	while (++j < img->y)
 	{
@@ -114,7 +113,6 @@ static void translate_img(t_img *img, int t)
 		}
 	}
 }
-*/
 
 static void print_img(mlx_image_t *mlx_img, t_img *img)
 {
@@ -170,7 +168,7 @@ int main(int argc, char **argv)
 	if (round_value(HEIGHT / transformed->height) < s)
 		s = round_value(HEIGHT / transformed->height);
 	scale_img(transformed, s);
-	//translate_img(transformed, t);
+	translate_img(transformed, 0);
 	print_img(img, transformed);
 
 	//display instance
