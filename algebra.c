@@ -6,15 +6,15 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/11 21:52:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/12 03:12:59 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/12 17:53:56 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	project(t_img *img, int i, int j, int z)
+void	isometric(t_img *img, int i, int j, int z)
 {
-	//isometric projection
+	//hardcoded isometric projection
 	img->pixels[j][i].x = (i - j) * cos(M_PI / 6); //30deg
 	img->pixels[j][i].y = (i + j) * sin(M_PI / 6) - z; //30deg
 
@@ -52,73 +52,9 @@ t_img	*transform_map(t_map *map)
 	{
 		i = -1;
 		while (++i < img->x)
-			project(img, i, j, map->cells[j][i].z);
+			isometric(img, i, j, map->cells[j][i].z);
 	}
 	return (img);
-}
-
-void	scale_img(t_img *img, int s)
-{
-	int		j;
-	int		i;
-
-	img->min_x *= s;
-	img->max_x *= s;
-	img->min_y *= s;
-	img->max_y *= s;
-	img->width *= s;
-	img->height *= s;
-	j = -1;
-	while (++j < img->y)
-	{
-		i = -1;
-		while (++i < img->x)
-		{
-			img->pixels[j][i].x = round_value(img->pixels[j][i].x * s);
-			img->pixels[j][i].y = round_value(img->pixels[j][i].y * s);
-		}
-	}
-}
-
-void	translate_img(t_img *img, int t)
-{
-	int		j;
-	int		i;
-	int		x_offset;
-	int		y_offset;
-
-	x_offset = round_value(img->width / 2);
-	y_offset = round_value(img->height / 2);
-	j = -1;
-	while (++j < img->y)
-	{
-		i = -1;
-		while (++i < img->x)
-		{
-			img->pixels[j][i].x += x_offset + t;
-			img->pixels[j][i].y += y_offset + t;
-		}
-	}
-}
-
-void	print_img(mlx_image_t *mlx_img, t_img *img)
-{
-	int	j;
-	int	i;
-
-	j = -1;
-	while (++j < img->y)
-	{
-		i = -1;
-		while (++i < img->x)
-		{
-			printf("x->%i, y->%i\n", i, j);
-			if (i + 1 < img->x)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1]);
-			if (j + 1 < img->y)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i]);
-		}
-	}
 }
 
 t_img	*new_img(int argc, char **argv)
@@ -140,32 +76,34 @@ t_img	*new_img(int argc, char **argv)
 	return (img);
 }
 
-
-mlx_image_t	*display(mlx_t *mlx, t_img *transformed)
+void	display(mlx_t *mlx, t_img *transformed, mlx_image_t *img)
 {
-	mlx_image_t	*img;
-	int s;
-	int t;
+	int	sx;
+	int	sy;
+	//int	tx;
+	//int	ty;
 
-	//own
-	t = 10; //random value
-	s = round_value(WIDTH / transformed->width);
-	if (round_value(HEIGHT / transformed->height) < s)
-		s = round_value(HEIGHT / transformed->height);
-	scale_img(transformed, s);
-	translate_img(transformed, t);
+	//scale
+	sx = 1;
+	sy = 1;
+	//s = round_value(WIDTH / transformed->width);
+	//if (round_value(HEIGHT / transformed->height) < s)
+	//	s = round_value(HEIGHT / transformed->height);
+	scale_img(transformed, sx, sy);
 
-	//mlx_img
-	img = mlx_new_image(mlx, WIDTH, HEIGHT);
-	if (!img)
-		error();
+	//translate
+	//tx = round_value(transformed->width / 2);
+	//ty = round_value(transformed->height / 2);
+	translate_img(transformed, 10, 10);
+
+	rotate_img(transformed, M_PI / 180);
 
 	//background
-	ft_memset(img->pixels, 127, img->width * img->height * sizeof(int32_t));
-	print_img(img, transformed);
+	ft_memset(img->pixels, 0, img->width * img->height * sizeof(int32_t));
 
-	//display instance
+	//from transformed to mlx_img
+	put_img(img, transformed);
+
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		error();
-	return (img);
 }

@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/12 03:23:55 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/12 17:51:06 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <stdint.h> //erase?
 # include <math.h>
 # include <MLX42/MLX42.h>
-# define WIDTH 512
-# define HEIGHT 512
+# define WIDTH 1024
+# define HEIGHT 1024
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -67,6 +67,7 @@ typedef struct s_image
 typedef struct s_hook_params
 {
 	mlx_t	*mlx;
+	mlx_image_t	*mlx_img;
 	t_img	*transformed;
 }	t_hook_params;
 
@@ -75,12 +76,12 @@ int		ft_perror(char *error_msg, int is_syscall);
 char	*clean(char *line);
 
 //map_parsing.c
-t_cell	**init_cells(int x, int y);
-void	init_img(t_img *img, t_map *map);
-int		validate_values(char **values);
+//int		validate_values(char **values);
+//t_cell	**init_cells(int x, int y);
 t_cell	**validate_file(char **argv, int *x, int *y);
-int		insert_values(t_map *map, char **x_values, int y);
+//void	insert_values(t_map *map, char **x_values, int y);
 void	fill_cells(t_map *map, char **argv);
+void	init_img(t_img *img, t_map *map);
 
 //line.c
 void	bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end);
@@ -90,12 +91,15 @@ void	error(void);
 int	round_value(float value);
 
 //algebra.c
-void	project(t_img *img, int i, int j, int z);
+void	isometric(t_img *img, int i, int j, int z);
 t_img	*transform_map(t_map *map);
-void	scale_img(t_img *img, int s);
-void	translate_img(t_img *img, int t);
-void	print_img(mlx_image_t *mlx_img, t_img *img);
 t_img	*new_img(int argc, char **argv);
-mlx_image_t	*display(mlx_t *mlx, t_img *transformed);
+void	display(mlx_t *mlx, t_img *transformed, mlx_image_t	*img);
+
+//transform_image.c
+void	scale_img(t_img *img, int sx, int sy);
+void	translate_img(t_img *img, int tx, int ty);
+void    rotate_img(t_img *img, float angle);
+void	put_img(mlx_image_t *mlx_img, t_img *img);
 
 #endif

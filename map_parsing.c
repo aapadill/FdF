@@ -12,7 +12,23 @@
 
 #include "fdf.h"
 
-t_cell	**init_cells(int x, int y)
+static	int	validate_values(char **values)
+{
+	char	**z;
+	int		color;
+
+	while (*values)
+	{
+		z = ft_split(*values++, ',', &color);
+		if (!z)
+			ft_perror("Malloc error (z split)", 1); //free values[i], free values
+		if (color < 1 || color > 2 || int_overflows(z[0]))
+			ft_perror("Values format error", 0); //free values[i], free values, free z
+	}
+	return (color - 1);
+}
+
+static	t_cell	**init_cells(int x, int y)
 {
 	t_cell	**cells;
 	int i;
@@ -36,49 +52,9 @@ t_cell	**init_cells(int x, int y)
 	return (cells);
 }
 
-void init_img(t_img *img, t_map *map)
-{
-	int h;
-	int i;
-
-	i = -1;
-	img->x = map->x;
-	img->y = map->y;
-	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
-	if (!img->pixels)
-		ft_perror("Malloc error for img->pixels", 1);
-	while (++i < img->y)
-	{
-		h = -1;
-		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
-		if (!img->pixels[i])
-		{
-			while (--i >= 0)
-				free(img->pixels[i]);
-			free(img->pixels);
-			ft_perror("Malloc error for a pixels row", 1);
-		}
-		while (++h < img->x)
-			img->pixels[i][h].color = map->cells[i][h].color;
-	}
-}
-
-int	validate_values(char **values)
-{
-	char	**z;
-	int		color;
-
-	while (*values)
-	{
-		z = ft_split(*values++, ',', &color);
-		if (!z)
-			ft_perror("Malloc error (z split)", 1); //free values[i], free values
-		if (color < 1 || color > 2 || int_overflows(z[0]))
-			ft_perror("Values format error", 0); //free values[i], free values, free z
-	}
-	return (color - 1);
-}
-
+/*
+ * Validate the file and return a 2D array of cells
+ */
 t_cell	**validate_file(char **argv, int *x, int *y)
 {
 	int		fd;
@@ -96,20 +72,19 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 			break ;
 		splitted_line = ft_split(clean(line), ' ', &values);
 		if (!splitted_line)
-			ft_perror("Malloc error (x split)", 1);
+			ft_perror("Malloc error (x split)", 1); //free line //close fd
 		validate_values(splitted_line);
 		if (!*y)
 			*x = values;
-		else if (*x != values)
-			ft_perror("Map error (your file is missing some x values)", 0);//free splitted
+		else if (*x != values) //free line //close fd //free splitted_line
+			ft_perror("Map error (your file is missing some x values)", 0);
 		(*y)++;
 	}
-	close(fd); //free line, splitted_line
+	close(fd); //free line //free splitted_line
 	return (init_cells(*x, *y));
 }
 
-//int	insert_values(t_cell **cells, char **x_values, int y)
-int	insert_values(t_map	*map, char **x_values, int y)
+static	void	insert_values(t_map	*map, char **x_values, int y)
 {
 	int		i;
 	char	**z;
@@ -120,7 +95,7 @@ int	insert_values(t_map	*map, char **x_values, int y)
 	{
 		z = ft_split(x_values[i], ',', &color);
 		if (!z) //while(--i) free(x_values[i]); free(x_values);
-			ft_perror("Malloc error (z split)", 1); 
+			ft_perror("Malloc error (z split)", 1);
 		map->cells[y][i].z = ft_atoi(z[0]);
 		if (!i && !y)
 		{
@@ -137,9 +112,11 @@ int	insert_values(t_map	*map, char **x_values, int y)
 			map->cells[y][i].color = 0; //default color
 		i++;
 	}
-	return (1);
 }
 
+/*
+ * Fill the cells of the map with the values from the file
+ */
 void	fill_cells(t_map *map, char **argv)
 {
 	int		fd;
@@ -151,7 +128,7 @@ void	fill_cells(t_map *map, char **argv)
 	y = 0;
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-		ft_perror("No file", 1);
+		ft_perror("No file", 1); //close fd
 	while (1)
 	{
 		line = get_next_line(fd);
@@ -159,9 +136,40 @@ void	fill_cells(t_map *map, char **argv)
 			break ;
 		x_values = ft_split(clean(line), ' ', &x);
 		if (!x_values)
-			ft_perror("ft_split error", 1); //free line?
+			ft_perror("ft_split error", 1); //free line //close fd
 		insert_values(map, x_values, y);
 		y++;
 	}
+	free(line);
 	close(fd);
+}
+
+/*
+ * Initialize the img struct with the values from the map
+ */
+void init_img(t_img *img, t_map *map)
+{
+	int h;
+	int i;
+
+	i = -1;
+	img->x = map->x;
+	img->y = map->y;
+	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
+	if (!img->pixels)
+		ft_perror("Malloc error for img->pixels", 1); //free img //free map?
+	while (++i < img->y)
+	{
+		h = -1;
+		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
+		if (!img->pixels[i])
+		{
+			while (--i >= 0)
+				free(img->pixels[i]);
+			free(img->pixels);
+			ft_perror("Malloc error for a pixels row", 1);
+		}
+		while (++h < img->x)
+			img->pixels[i][h].color = map->cells[i][h].color;
+	}
 }

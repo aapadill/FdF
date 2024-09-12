@@ -11,7 +11,7 @@ HEADERS	= -I ./include -I $(LIBMLX)/include
 
 LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" -pthread -lm #ldl
 
-SRCS	= fdf_utils.c map_parsing.c line.c algebra_utils.c algebra.c main.c
+SRCS	= fdf_utils.c map_parsing.c line.c algebra_utils.c algebra.c transform_image.c main.c
 
 OBJS	= $(SRCS:.c=.o)
 
