@@ -96,6 +96,8 @@ static	void	insert_values(t_map	*map, char **x_values, int y)
 		z = ft_split(x_values[i], ',', &color);
 		if (!z) //while(--i) free(x_values[i]); free(x_values);
 			ft_perror("Malloc error (z split)", 1);
+		map->cells[y][i].x = i;
+		map->cells[y][i].y = y;
 		map->cells[y][i].z = ft_atoi(z[0]);
 		if (!i && !y)
 		{
@@ -111,7 +113,10 @@ static	void	insert_values(t_map	*map, char **x_values, int y)
 		else
 			map->cells[y][i].color = 0; //default color
 		i++;
+		//free(z[0], z[1])? free(z);
 	}
+	//while(--i) free(x_values[i]);?
+	//free(x_values);
 }
 
 /*
@@ -135,12 +140,12 @@ void	fill_cells(t_map *map, char **argv)
 		if (!line)
 			break ;
 		x_values = ft_split(clean(line), ' ', &x);
+		free(line);
 		if (!x_values)
-			ft_perror("ft_split error", 1); //free line //close fd
+			ft_perror("ft_split error", 1); //close fd
 		insert_values(map, x_values, y);
 		y++;
 	}
-	free(line);
 	close(fd);
 }
 

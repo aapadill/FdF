@@ -31,6 +31,8 @@
 
 typedef struct s_cell
 {
+	int			x;
+	int			y;
 	int			z;
 	uint32_t	color;
 }	t_cell;
@@ -67,6 +69,7 @@ typedef struct s_image
 typedef struct s_hook_params
 {
 	mlx_t	*mlx;
+	t_map	*map;
 	mlx_image_t	*mlx_img;
 	t_img	*transformed;
 }	t_hook_params;
@@ -90,11 +93,20 @@ void	bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end);
 void	error(void);
 int	round_value(float value);
 
-//algebra.c
+/*algebra.c
 void	isometric(t_img *img, int i, int j, int z);
 t_img	*transform_map(t_map *map);
 t_img	*new_img(int argc, char **argv);
 void	display(mlx_t *mlx, t_img *transformed, mlx_image_t	*img);
+*/
+
+//transform_map.c
+void	translate_map(t_map *map, float tx, float ty, float tz);
+void	scale_map(t_map *map, float sx, float sy, float sz);
+void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
+void	project_isometric(t_img *img, t_map *map);
+void	update_img(t_img *img, t_map *map);
+void	display(mlx_t *mlx, t_map *map, t_img *img, mlx_image_t *mlx_img);
 
 //transform_image.c
 void	scale_img(t_img *img, int sx, int sy);

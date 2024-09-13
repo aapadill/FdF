@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "fdf.h"
 
 void	isometric(t_img *img, int i, int j, int z)
@@ -107,3 +108,4 @@ void	display(mlx_t *mlx, t_img *transformed, mlx_image_t *img)
 	if (mlx_image_to_window(mlx, img, 0, 0) < 0)
 		error();
 }
+*/
