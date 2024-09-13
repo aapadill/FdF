@@ -42,7 +42,7 @@ void display_keyhook(mlx_key_data_t keydata, void *param)
 		scale_map(hook_params->map, 0.5, 0.5, 0.5);
 		display(hook_params->mlx, hook_params->map, hook_params->transformed, hook_params->mlx_img);
 	}
-	if (keydata.key == MLX_KEY_1 && keydata.action == MLX_PRESS)
+	if (keydata.key == MLX_KEY_2 && keydata.action == MLX_PRESS)
 	{
 		scale_map(hook_params->map, 2, 2, 2);
 		display(hook_params->mlx, hook_params->map, hook_params->transformed, hook_params->mlx_img);
