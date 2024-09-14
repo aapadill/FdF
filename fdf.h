@@ -70,8 +70,11 @@ typedef struct s_hook_params
 {
 	mlx_t	*mlx;
 	t_map	*map;
+	t_img	*img;
 	mlx_image_t	*mlx_img;
-	t_img	*transformed;
+	float	rx;
+	float	ry;
+	float	rz;
 }	t_hook_params;
 
 //fdf_utils.c
@@ -106,7 +109,7 @@ void	scale_map(t_map *map, float sx, float sy, float sz);
 void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 void	project_isometric(t_img *img, t_map *map);
 void	update_img(t_img *img, t_map *map);
-void	display(mlx_t *mlx, t_map *map, t_img *img, mlx_image_t *mlx_img);
+void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img);
 
 //transform_image.c
 void	scale_img(t_img *img, int sx, int sy);

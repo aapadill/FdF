@@ -109,6 +109,8 @@ void	project_isometric(t_img *img, t_map *map)
 
 	angle = M_PI / 6; //30deg
 
+	//img->x = map->x;
+	//img->y = map->y;
 	j = -1;
 	while (++j < map->y)
 	{
@@ -147,110 +149,4 @@ void	project_isometric(t_img *img, t_map *map)
 	}
 	img->width = img->max_x - img->min_x;
 	img->height = img->max_y - img->min_y;
-}
-
-/*
-void	update_img(t_img *img, t_map *map)
-{
-	int		j;
-	int		i;
-	float	x;
-	float	y;
-
-	j = -1;
-	while (++j < map->y)
-	{
-		i = -1;
-		while (++i < map->x)
-		{
-			x = map->cells[j][i].x;
-			y = map->cells[j][i].y;
-
-			img->pixels[j][i].x = x;
-			img->pixels[j][i].y = y;
-			img->pixels[j][i].color = map->cells[j][i].color; //maybe is not needed. again
-
-			if (j == 0 && i == 0)
-			{
-				img->min_x = x;
-				img->max_x = x;
-				img->min_y = y;
-				img->max_y = y;
-			}
-			else
-			{
-				if (x < img->min_x)
-					img->min_x = x;
-				if (x > img->max_x)
-					img->max_x = x;
-				if (y < img->min_y)
-					img->min_y = y;
-				if (y > img->max_y)
-					img->max_y = y;
-			}
-		}
-	}
-	img->width = img->max_x - img->min_x;
-	img->height = img->max_y - img->min_y;
-}
-*/
-
-void	display(mlx_t *mlx, t_map *map, t_img *img, mlx_image_t *mlx_img)
-{
-	float	sx;
-	float	sy;
-	//mafloat	sz;
-	int		s;
-
-	int		tx;
-	int		ty;
-	//int 	tz;
-
-	//float	rx;
-	//float	ry;
-	//float	rz;
-
-	//sx = 1;
-	//sy = 1;
-	//sz = 1;
-
-	//tx = 0;
-	//ty = 0;
-	//tz = 0;
-
-	//rx = 0;
-	//ry = 0;
-	//rz = 0;
-
-	//transformations to the map
-	//scale_map(map, sx, sy, sz);
-	//rotate_map(map, rx, ry, rz);
-	//translate_map(map, tx, ty, tz);
-
-	//manual isometric
-	project_isometric(img, map);
-	//update_img(img, map);
-
-	//fit img to window
-	sx = WIDTH / img->width;
-	sy = HEIGHT / img->height;
-	if (sx < sy)
-		s = sx;
-	else
-		s = sy;
-	scale_img(img, s, s);
-
-	//center image
-	tx = (WIDTH - img->width) / 2 - img->min_x;
-	ty = (HEIGHT - img->height) / 2 - img->min_y;
-	translate_img(img, tx, ty);
-
-	//background
-	ft_memset(mlx_img->pixels, 0, mlx_img->width * mlx_img->height * sizeof(int32_t));
-
-	//put image to mlx_img
-	put_img(mlx_img, img);
-
-	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
-		error();
 }

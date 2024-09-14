@@ -60,7 +60,7 @@ void	translate_img(t_img *img, int tx, int ty)
 	}
 }
 
-//you're assuming values are initialized
+//you're assuming values are initialized //one angle only
 void    rotate_img(t_img *img, float angle)
 {
 	int     j;
