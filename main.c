@@ -24,8 +24,8 @@ void copy_map(t_map *dst, t_map *src)
 	dst->cells = malloc(sizeof(t_cell *) * src->y);
 	if (!dst->cells)
 		ft_perror("Malloc error (copy_map)", 1);
-	i = 0;
-	while (i < src->y)
+	i = -1;
+	while (++i < src->y)
 	{
 		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
 		if (!dst->cells[i])
@@ -35,39 +35,24 @@ void copy_map(t_map *dst, t_map *src)
 			free(dst->cells);
 			ft_perror("Malloc error (copy_map)", 1);
 		}
-		j = 0;
-		while (j < src->x)
-		{
+		j = -1;
+		while (++j < src->x)
 			dst->cells[i][j] = src->cells[i][j];
-			j++;
-		}
-		i++;
 	}
 }
 
 void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
 {
-	float	sx;
-	float	sy;
-	int		s;
-
-	int		tx;
-	int		ty;
-
-	int i;
 	t_img *img;
 	t_img img_local;
-
 	img = &img_local;
-
-	//scale_map(map, sx, sy, sz);
-	//rotate_map(map, rx, ry, rz);
-	//translate_map(map, tx, ty, tz);
-
 	init_img(img, map);
 	project_isometric(img, map);
 
-	//fit img to window
+	//scale img to fit to window
+	float	sx;
+	float	sy;
+	int		s;
 	sx = WIDTH / img->width;
 	sy = HEIGHT / img->height;
 	if (sx < sy)
@@ -75,7 +60,9 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
 	else
 		s = sy;
 	scale_img(img, s, s);
-
+	//translate to fit to window
+	int		tx;
+	int		ty;
 	//center image
 	tx = (WIDTH - img->width) / 2 - img->min_x;
 	ty = (HEIGHT - img->height) / 2 - img->min_y;
@@ -83,10 +70,10 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
 
 	//background
 	ft_memset(mlx_img->pixels, 0, mlx_img->width * mlx_img->height * sizeof(int32_t));
-
 	//put image to mlx_img
 	put_img(mlx_img, img);
 
+	int i;
 	i = img->y;
 	while (i--)
 		free(img->pixels[i]);
@@ -111,9 +98,24 @@ void display_keyhook(mlx_key_data_t keydata, void *param)
 	{
 		t_map	transformed_map;
 
-		hook_params->rx += M_PI / 180;
+		hook_params->rx += 3;
 		
-		printf("%f\n", hook_params->rx / (M_PI / 180));
+		printf("%f\n", hook_params->rx);
+		copy_map(&transformed_map, hook_params->map);
+		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
+		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
+		i = transformed_map.y;
+		while (i--)
+			free(transformed_map.cells[i]);
+		free(transformed_map.cells);
+	}
+	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
+	{
+		t_map	transformed_map;
+
+		hook_params->rx -= 3;
+		
+		printf("%f\n", hook_params->rx);
 		copy_map(&transformed_map, hook_params->map);
 		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
 		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
@@ -126,9 +128,9 @@ void display_keyhook(mlx_key_data_t keydata, void *param)
 	{
 		t_map	transformed_map;
 
-		hook_params->ry += M_PI / 180;
+		hook_params->ry += 3;
 		
-		printf("%f\n", hook_params->ry / (M_PI / 180));
+		printf("%f\n", hook_params->ry);
 		copy_map(&transformed_map, hook_params->map);
 		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
 		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
@@ -141,9 +143,24 @@ void display_keyhook(mlx_key_data_t keydata, void *param)
 	{
 		t_map	transformed_map;
 
-		hook_params->rz += M_PI / 180;
+		hook_params->rz += 1;
 		
-		printf("%f\n", hook_params->rz / (M_PI / 180));
+		printf("%f\n", hook_params->rz);
+		copy_map(&transformed_map, hook_params->map);
+		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
+		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
+		i = transformed_map.y;
+		while (i--)
+			free(transformed_map.cells[i]);
+		free(transformed_map.cells);
+	}
+	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
+	{
+		t_map	transformed_map;
+
+		hook_params->rz -= 1;
+		
+		printf("%f\n", hook_params->rz);
 		copy_map(&transformed_map, hook_params->map);
 		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
 		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
@@ -197,24 +214,21 @@ int main(int argc, char **argv)
 	hook_params.ry = 0;
 	hook_params.rz = 0;
 
-	//
+	//map to img, img to mlx_img
 	display(mlx, &map, mlx_img);
 
 	//hook
 	mlx_key_hook(mlx, &display_keyhook, &hook_params);
 
-	//display instance
-	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
-		error();
-
 	mlx_loop(mlx);
-	mlx_delete_image(mlx, mlx_img);
-	mlx_terminate(mlx);
 
 	i = map.y;
 	while (i--)
 		free(map.cells[i]);
 	free(map.cells);
+
+	mlx_delete_image(mlx, mlx_img);
+	mlx_terminate(mlx);
 
 	return (EXIT_SUCCESS);
 }

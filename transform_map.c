@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 03:24:32 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/13 03:27:44 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:30:24 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,18 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 	float	tmp_y;
 	float	tmp_z;
 
+	float	center_x;
+	float	center_y;
+	float	center_z;
+
+	center_x = (map->x - 1) / 2;
+	center_y = (map->y - 1) / 2;
+	center_z = (map->z_min + map->z_max) / 2;
+
+	angle_x *= M_PI / 180;
+	angle_y *= M_PI / 180;
+	angle_z *= M_PI / 180;
+
 	j = -1;
 	while (++j < map->y)
 	{
@@ -68,6 +80,11 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 			x = map->cells[j][i].x;
 			y = map->cells[j][i].y;
 			z = map->cells[j][i].z;
+
+			x -= center_x;
+			y -= center_y;
+			z -= center_z;
+
 			if (angle_x != 0)
 			{
 				tmp_y = y * cos(angle_x) - z * sin(angle_x);
@@ -89,6 +106,11 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 				x = tmp_x;
 				y = tmp_y;
 			}
+
+			x += center_x;
+			y += center_y;
+			z += center_z;
+
 			map->cells[j][i].x = x;
 			map->cells[j][i].y = y;
 			map->cells[j][i].z = z;
@@ -109,8 +131,8 @@ void	project_isometric(t_img *img, t_map *map)
 
 	angle = M_PI / 6; //30deg
 
-	//img->x = map->x;
-	//img->y = map->y;
+	img->x = map->x;
+	img->y = map->y;
 	j = -1;
 	while (++j < map->y)
 	{
