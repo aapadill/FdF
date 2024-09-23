@@ -120,6 +120,5 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth_buffer);
 		}
 	}
-
 	free(depth_buffer);
 }

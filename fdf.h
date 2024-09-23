@@ -69,18 +69,23 @@ typedef struct s_image
 
 typedef struct s_hook_params
 {
-	mlx_t	*mlx;
 	t_map	*map;
-	t_map	*transformed_map;
+	mlx_t	*mlx;
 	t_img	*img;
 	mlx_image_t	*mlx_img;
 	float	rx;
 	float	ry;
 	float	rz;
+	float	tx;
+	float	ty;
+	float	tz;
+	float	sx;
+	float	sy;
+	float	sz;
 }	t_hook_params;
 
 //fdf_utils.c
-void	error(void);
+void	mlx_perror();
 int		ft_perror(char *error_msg, int is_syscall);
 char	*clean(char *line);
 void	ft_free(int n, void **ptr_array);
@@ -96,23 +101,13 @@ void	init_img(t_img *img, t_map *map);
 //line.c
 void	bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buffer);
 
-/*
-algebra_utils.c
-int	round_value(float value);
-
-algebra.c
-void	isometric(t_img *img, int i, int j, int z);
-t_img	*transform_map(t_map *map);
-t_img	*new_img(int argc, char **argv);
-void	display(mlx_t *mlx, t_img *transformed, mlx_image_t	*img);
-*/
-
 //transform_map.c
 void	translate_map(t_map *map, float tx, float ty, float tz);
 void	scale_map(t_map *map, float sx, float sy, float sz);
 void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 void	project_isometric(t_img *img, t_map *map);
-void	update_img(t_img *img, t_map *map);
+void	copy_map(t_map *dst, t_map *src);
+
 void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img);
 
 //transform_image.c

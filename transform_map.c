@@ -157,3 +157,30 @@ void	project_isometric(t_img *img, t_map *map)
 	img->width = img->max_x - img->min_x;
 	img->height = img->max_y - img->min_y;
 }
+
+void copy_map(t_map *dst, t_map *src)
+{
+	int i;
+	int j;
+
+	dst->x = src->x;
+	dst->y = src->y;
+	dst->z_min = src->z_min;
+	dst->z_max = src->z_max;
+	dst->cells = malloc(sizeof(t_cell *) * src->y);
+	if (!dst->cells)
+		ft_perror("Malloc error (copy_map)", 1);
+	i = -1;
+	while (++i < src->y)
+	{
+		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
+		if (!dst->cells[i])
+		{
+			ft_free(i, (void **)dst->cells);
+			ft_perror("Malloc error (copy_map)", 1);
+		}
+		j = -1;
+		while (++j < src->x)
+			dst->cells[i][j] = src->cells[i][j];
+	}
+}

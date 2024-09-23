@@ -12,114 +12,80 @@
 
 #include "fdf.h"
 
-void copy_map(t_map *dst, t_map *src)
+/*
+ * Returns the address of the parameter to be modified, assumes:
+ * 0) transformations are only rotation, translation and scaling
+ * 1) x, y, z are defined in order in the t_hook_params struct 
+ * 2) the axis are either 'x', 'y' or 'z' (only).
+ */
+float	*parameter_finder(t_hook_params	*h_p, char transf, char axis)
 {
-	int i;
-	int j;
+	float	*base;
+	int		axis_index;
 
-	dst->x = src->x;
-	dst->y = src->y;
-	dst->z_min = src->z_min;
-	dst->z_max = src->z_max;
-	dst->cells = malloc(sizeof(t_cell *) * src->y);
-	if (!dst->cells)
-		ft_perror("Malloc error (copy_map)", 1);
-	i = -1;
-	while (++i < src->y)
-	{
-		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
-		if (!dst->cells[i])
-		{
-			ft_free(i, (void **)dst->cells);
-			ft_perror("Malloc error (copy_map)", 1);
-		}
-		j = -1;
-		while (++j < src->x)
-			dst->cells[i][j] = src->cells[i][j];
-	}
+	base = NULL;
+	axis_index = axis - 'x';
+	if (axis_index < 0 || axis_index > 2)
+		ft_perror("Invalid axis", 0); //free everything
+	if (transf == 'r')
+		base = &h_p->rx;
+	else if (transf == 't')
+		base = &h_p->tx;
+	else if (transf == 's')
+		base = &h_p->sx;
+	if (base)
+		return (base + axis_index);
+	return (NULL);
 }
 
-/* 
- * change the naming to transform_keyhook and
- * make this one more general so inside param there's also a
- * pointer to transformation functions: scale, translate, rotate
-*/
-void display_keyhook(mlx_key_data_t keydata, void *param)
+void	action(t_hook_params *h_p, char transf, char axis, char sign)
+{
+	t_map	transformed_map;
+
+	if (sign == '+')
+		*parameter_finder(h_p, transf, axis) += 1;
+	else
+		*parameter_finder(h_p, transf, axis) -= 1;
+	//printf("x: %f\n", h_p->rx);
+	copy_map(&transformed_map, h_p->map);
+	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
+	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
+	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
+	display(h_p->mlx, &transformed_map, h_p->mlx_img);
+	ft_free(transformed_map.y, (void **)transformed_map.cells);
+}
+
+void	keyhook(mlx_key_data_t keydata, void *param)
 {
 	t_hook_params	*hook_params;
 
 	hook_params = (t_hook_params *)param;
-	if (keydata.key == MLX_KEY_X && keydata.action == MLX_PRESS)
+	if (keydata.action == MLX_REPEAT || keydata.action == MLX_PRESS)
 	{
-		t_map	transformed_map;
-
-		hook_params->rx += 15;
-
-		printf("x: %f\n", hook_params->rx);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
-	}
-	if (keydata.key == MLX_KEY_S && keydata.action == MLX_PRESS)
-	{
-		t_map	transformed_map;
-
-		hook_params->rx -= 15;
-
-		printf("x: %f\n", hook_params->rx);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
-	}
-	if (keydata.key == MLX_KEY_C && keydata.action == MLX_PRESS)
-	{
-		t_map	transformed_map;
-
-		hook_params->ry += 15;
-
-		printf("y: %f\n", hook_params->ry);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
-	}
-	if (keydata.key == MLX_KEY_D && keydata.action == MLX_PRESS)
-	{
-		t_map	transformed_map;
-
-		hook_params->ry -= 15;
-
-		printf("y: %f\n", hook_params->ry);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
-	}
-	if (keydata.key == MLX_KEY_Z && keydata.action == MLX_PRESS)
-	{
-		t_map	transformed_map;
-
-		hook_params->rz += 15;
-
-		printf("z: %f\n", hook_params->rz);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
-	}
-	if (keydata.key == MLX_KEY_A && keydata.action == MLX_PRESS)
-	{
-		t_map	transformed_map;
-
-		hook_params->rz -= 15;
-
-		printf("z: %f\n", hook_params->rz);
-		copy_map(&transformed_map, hook_params->map);
-		rotate_map(&transformed_map, hook_params->rx, hook_params->ry, hook_params->rz);
-		display(hook_params->mlx, &transformed_map, hook_params->mlx_img);
-		ft_free(transformed_map.y, (void **)transformed_map.cells);
+		if (keydata.key == MLX_KEY_X)
+			action(hook_params, 'r', 'x', '+');
+		if (keydata.key == MLX_KEY_S)
+			action(hook_params, 'r', 'x', '-');
+		if (keydata.key == MLX_KEY_C)
+			action(hook_params, 'r', 'y', '+');
+		if (keydata.key == MLX_KEY_D)
+			action(hook_params, 'r', 'y', '-');
+		if (keydata.key == MLX_KEY_Z)
+			action(hook_params, 'r', 'z', '+');
+		if (keydata.key == MLX_KEY_A)
+			action(hook_params, 'r', 'z', '-');
+		if (keydata.key == MLX_KEY_V)
+			action(hook_params, 's', 'x', '+');
+		if (keydata.key == MLX_KEY_F)
+			action(hook_params, 's', 'x', '-');
+		if (keydata.key == MLX_KEY_B)
+			action(hook_params, 's', 'y', '+');
+		if (keydata.key == MLX_KEY_G)
+			action(hook_params, 's', 'y', '-');
+		if (keydata.key == MLX_KEY_N)
+			action(hook_params, 's', 'z', '+');
+		if (keydata.key == MLX_KEY_H)
+			action(hook_params, 's', 'z', '-');
 	}
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 	{
@@ -128,6 +94,36 @@ void display_keyhook(mlx_key_data_t keydata, void *param)
 		ft_free(hook_params->map->y, (void **)hook_params->map->cells);
 		exit(EXIT_SUCCESS);
 	}
+}
+
+/*
+ * Scales the projection to fit the window
+
+static void	scale_to_fit(t_img *img)
+{
+	float	sx;
+	float	sy;
+	float	s;
+
+	sx = WIDTH / img->width;
+	sy = HEIGHT / img->height;
+	if (sx < sy)
+		s = sx;
+	else
+		s = sy;
+	scale_img(img, s, s);
+} */
+
+/*
+ * Translates the projection to the center of the window
+ */
+static void	translate_to_fit(t_img *img)
+{
+	int		tx;
+	int		ty;
+	tx = (WIDTH - img->width) / 2 - img->min_x;
+	ty = (HEIGHT - img->height) / 2 - img->min_y;
+	translate_img(img, tx, ty);
 }
 
 void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
@@ -139,25 +135,11 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
 	init_img(img, map);
 	project_isometric(img, map);
 
-	//scale img to fit to window
-	float	sx;
-	float	sy;
-	float	s;
-	sx = WIDTH / img->width;
-	sy = HEIGHT / img->height;
-	if (sx < sy)
-		s = sx;
-	else
-		s = sy;
-	scale_img(img, s, s);
+	//scale proj to fit to window
+	//scale_to_fit(img);
 
-	//translate to fit to window
-	int		tx;
-	int		ty;
-	//center image
-	tx = (WIDTH - img->width) / 2 - img->min_x;
-	ty = (HEIGHT - img->height) / 2 - img->min_y;
-	translate_img(img, tx, ty);
+	//translate proj to fit to window
+	translate_to_fit(img);
 
 	//background
 	ft_memset(mlx_img->pixels, 0, mlx_img->width * mlx_img->height * sizeof(int32_t));
@@ -168,51 +150,46 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img)
 	ft_free(img->y, (void **)img->pixels);
 
 	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
-		error();
+		mlx_perror();
+}
+
+void	init_hook_params(t_hook_params *hook_params, t_map *map)
+{
+	hook_params->rx = 0;
+	hook_params->ry = 0;
+	hook_params->rz = 0;
+	hook_params->tx = 0;
+	hook_params->ty = 0;
+	hook_params->tz = 0;
+	hook_params->sx = 1;
+	hook_params->sy = 1;
+	hook_params->sz = 1;
+	//hook_params->map = map;
+	hook_params->mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
+	if (!hook_params->mlx)
+		mlx_perror();
+	hook_params->mlx_img = mlx_new_image(hook_params->mlx, WIDTH, HEIGHT);
+	if (!hook_params->mlx_img)
+		mlx_perror(); //free mlx
+	hook_params->map = map;
 }
 
 int main(int argc, char **argv)
 {
-	mlx_t	*mlx;
-	t_map	map;
-	mlx_image_t *mlx_img;
+	t_map			map;
 	t_hook_params	hook_params;
 
-	hook_params.rx = 0;
-	hook_params.ry = 0;
-	hook_params.rz = 0;
-
-	//map
 	map.y = 0;
 	if (argc != 2)
 		ft_perror("No valid arguments", 0);
 	map.cells = validate_file(argv, &map.x, &map.y);
 	fill_cells(&map, argv);
-	hook_params.map = &map;
-
-	//window
-	mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
-	if (!mlx)
-		error();
-	hook_params.mlx = mlx;
-
-	//canvas
-	mlx_img = mlx_new_image(mlx, WIDTH, HEIGHT);
-	if (!mlx_img)
-		error();
-	hook_params.mlx_img = mlx_img;
-
-	//map to img, img to mlx_img
-	display(mlx, &map, mlx_img);
-
-	//hook
-	mlx_key_hook(mlx, &display_keyhook, &hook_params);
-
-	mlx_loop(mlx);
-
+	init_hook_params(&hook_params, &map);
+	display(hook_params.mlx, &map, hook_params.mlx_img);
+	mlx_key_hook(hook_params.mlx, &keyhook, &hook_params);
+	mlx_loop(hook_params.mlx);
 	ft_free(map.y, (void **)map.cells);
-	mlx_delete_image(mlx, mlx_img);
-	mlx_terminate(mlx);
-
+	mlx_delete_image(hook_params.mlx, hook_params.mlx_img);
+	mlx_terminate(hook_params.mlx);
 	return (EXIT_SUCCESS);
 }

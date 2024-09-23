@@ -2,7 +2,7 @@
 
 NAME		= fdf
 CC			= cc
-CFLAGS		= -Wextra -Wall -O0 -Ofast -g #-Werror -fsanitize=address -Wunreachable-code 
+CFLAGS		= -Wextra -Wall -Werror #-O0 -Ofast -g #-fsanitize=address -Wunreachable-code 
 FT_PRINTF	= ./ft_printf
 LIBFT		= ./libft
 LIBMLX		= ./MLX42

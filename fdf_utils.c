@@ -12,9 +12,9 @@
 
 #include "fdf.h"
 
-void	error(void)
+void	mlx_perror(void)
 {
-	puts(mlx_strerror(mlx_errno));
+	ft_putendl_fd((char *)mlx_strerror(mlx_errno), STDERR_FILENO);
 	exit(EXIT_FAILURE);
 }
 
