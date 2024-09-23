@@ -6,11 +6,17 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:29:19 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/03 13:31:43 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:51:13 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+void	error(void)
+{
+	puts(mlx_strerror(mlx_errno));
+	exit(EXIT_FAILURE);
+}
 
 int	ft_perror(char *error_msg, int is_syscall)
 {
@@ -37,4 +43,11 @@ char	*clean(char *line)
 		len--;
 	}
 	return (line);
+}
+
+void	ft_free(int n, void **ptr_array)
+{
+	while (n--)
+		free(ptr_array[n]);
+	free(ptr_array);
 }

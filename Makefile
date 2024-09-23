@@ -2,16 +2,16 @@
 
 NAME		= fdf
 CC			= cc
-CFLAGS		= -Wextra -Wall -Werror -O2#-g #-fsanitize=address -Wunreachable-code -Ofast
+CFLAGS		= -Wextra -Wall -O0 -Ofast -g #-Werror -fsanitize=address -Wunreachable-code 
 FT_PRINTF	= ./ft_printf
 LIBFT		= ./libft
 LIBMLX		= ./MLX42
 
 HEADERS	= -I ./include -I $(LIBMLX)/include
 
-LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -L"/opt/homebrew/Cellar/glfw/3.4/lib/" -pthread -lm #ldl
+LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -pthread -lm #-L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl
 
-SRCS	= fdf_utils.c map_parsing.c line.c algebra_utils.c transform_map.c transform_image.c main.c #algebra.c
+SRCS	= fdf_utils.c map_parsing.c line.c transform_map.c transform_image.c main.c #algebra.c #algebra_utils.c
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -31,7 +31,7 @@ libmlx:
 	$(CC) $(CFLAGS) -o $@ -c $< $(HEADERS) 
 
 $(NAME): libftt ft_printff libmlx $(OBJS)
-	$(CC) $(OBJS) $(LIBFT)/libft.a $(FT_PRINTF)/libftprintf.a  $(LIBS) $(HEADERS) -o $(NAME)
+	$(CC) $(OBJS) $(LIBFT)/libft.a $(FT_PRINTF)/libftprintf.a  $(LIBS) $(HEADERS) -o $(NAME) 
 
 clean:
 	rm -rf $(OBJS)

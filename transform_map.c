@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 03:24:32 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/17 12:30:24 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:38:54 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,13 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 	float	tmp_y;
 	float	tmp_z;
 
-	float	center_x;
-	float	center_y;
-	float	center_z;
+	//float	center_x;
+	//float	center_y;
+	//float	center_z;
 
-	center_x = (map->x - 1) / 2;
-	center_y = (map->y - 1) / 2;
-	center_z = (map->z_min + map->z_max) / 2;
+	//center_x = (map->x - 1) / 2;
+	//center_y = (map->y - 1) / 2;
+	//center_z = (map->z_min + map->z_max) / 2;
 
 	angle_x *= M_PI / 180;
 	angle_y *= M_PI / 180;
@@ -81,9 +81,9 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 			y = map->cells[j][i].y;
 			z = map->cells[j][i].z;
 
-			x -= center_x;
-			y -= center_y;
-			z -= center_z;
+			//x -= center_x;
+			//y -= center_y;
+			//z -= center_z;
 
 			if (angle_x != 0)
 			{
@@ -107,9 +107,9 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 				y = tmp_y;
 			}
 
-			x += center_x;
-			y += center_y;
-			z += center_z;
+			//x += center_x;
+			//y += center_y;
+			//z += center_z;
 
 			map->cells[j][i].x = x;
 			map->cells[j][i].y = y;
@@ -143,11 +143,14 @@ void	project_isometric(t_img *img, t_map *map)
 			y = map->cells[j][i].y;
 			z = map->cells[j][i].z;
 
-			x_prime = (x - y) * cos(angle);
-			y_prime = (x + y) * sin(angle) - z;
+			x_prime = x;
+			y_prime = y;
+			//x_prime = (x - y) * cos(angle);
+			//y_prime = (x + y) * sin(angle) - z;
 
 			img->pixels[j][i].x = x_prime;
 			img->pixels[j][i].y = y_prime;
+			img->pixels[j][i].z = z;
 			img->pixels[j][i].color = map->cells[j][i].color; //maybe is not needed
 			if (j == 0 && i == 0)
 			{

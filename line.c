@@ -6,12 +6,13 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:58:23 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/11 16:33:21 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:42:58 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
+//change naming to argb
 int get_r(int rgba)
 {
     //return ((rgba >> 24) & 0xFF);
@@ -43,7 +44,7 @@ int get_rgba(int r, int g, int b, int a)
     //return (a << 24 | r << 16 | g << 8 | b);
 }
 
-void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end)
+void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buffer)
 {
 	//line
 	int		x;
@@ -57,7 +58,6 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end)
 	int		err;
 	int		e2;
 
-	///*
 	//color
 	float	step;
 	float	red_step;
@@ -67,27 +67,22 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end)
 	float	current_green;
 	float	current_blue;
 	uint32_t	current_color;
-	//*/
+
+	//depth
+	int		total_steps;
+	int		i;
+	int		index;
+	float	current_z;
+	float	z_step;
 
 	//line
-	x = (int)(start->x);
-	y = (int)(start->y);
-	x2 = (int)(end->x);
-	y2 = (int)(end->y);
+	x = (int)roundf(start->x);
+	y = (int)roundf(start->y);
+	x2 = (int)roundf(end->x);
+	y2 = (int)roundf(end->y);
 	dx = abs(x2 - x);
 	dy = abs(y2 - y);
 	err = dx - dy;
-
-	///*
-	//color
-	step = sqrt(dx * dx + dy * dy);
-	red_step = (get_r(end->color) - get_r(start->color)) / step;
-	green_step = (get_g(end->color) - get_g(start->color)) / step;
-	blue_step = (get_b(end->color) - get_b(start->color)) / step;
-	current_red = get_r(start->color);
-	current_green = get_g(start->color);
-	current_blue = get_b(start->color);
-	//*/
 
 	if (x < x2)
 		sx = 1;
@@ -97,35 +92,58 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end)
 		sy = 1;
 	else
 		sy = -1;
-	while (1)
-	{
-	/*
-	int rgba = end->color; // or 0xFFFFFFFF in hexadecimal
-    int red = get_r(rgba);
-    int green = get_g(rgba);
-    int blue = get_b(rgba);
-    int alpha = get_a(rgba);
 
-    printf("Red: %d, Green: %d, Blue: %d, Alpha: %d\n", red, green, blue, alpha);
-	*/
-		current_color = get_rgba(current_red, current_green, current_blue, 127);
-		mlx_put_pixel(img, x, y, current_color);
-		//exit condition
-		if (x == x2 && y == y2)
-			break;
+	//color
+	step = sqrt(dx * dx + dy * dy);
+	red_step = (get_r(end->color) - get_r(start->color)) / step;
+	green_step = (get_g(end->color) - get_g(start->color)) / step;
+	blue_step = (get_b(end->color) - get_b(start->color)) / step;
+	current_red = get_r(start->color);
+	current_green = get_g(start->color);
+	current_blue = get_b(start->color);
+
+	//depth
+	//total_steps = (dx > dy) ? dx : dy;
+	if (dx > dy)
+		total_steps = dx;
+	else
+		total_steps = dy;
+
+	if (total_steps == 0)
+		total_steps = 1;
+
+	z_step = (end->z - start->z) / total_steps;
+	current_z = start->z;
+
+	i = 0;
+
+	while (i <= total_steps)
+	{
+		if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+		{
+			index = y * WIDTH + x;
+			if (current_z < depth_buffer[index])
+			{
+				depth_buffer[index] = current_z;
+				current_color = get_rgba(current_red, current_green, current_blue, 127);
+				mlx_put_pixel(img, x, y, current_color);
+			}
+		}
 		e2 = 2 * err;
 		if (e2 > -dy)
 		{
 			err -= dy;
 			x += sx;
-			current_red += red_step;
-			current_green += green_step; 
-			current_blue += blue_step;
 		}
 		if (e2 < dx)
 		{
 			err += dx;
 			y += sy;
 		}
+		current_red += red_step;
+		current_green += green_step; 
+		current_blue += blue_step;
+		current_z += z_step;
+		i++;
 	}
 }

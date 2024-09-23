@@ -6,14 +6,14 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 21:57:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/12 21:57:05 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/20 18:26:39 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
 //you're assuming values are initialized
-void	scale_img(t_img *img, int sx, int sy)
+void	scale_img(t_img *img, float sx, float sy)
 {
 	int		j;
 	int		i;
@@ -31,8 +31,8 @@ void	scale_img(t_img *img, int sx, int sy)
 		i = -1;
 		while (++i < img->x)
 		{
-			img->pixels[j][i].x = round_value(img->pixels[j][i].x * sx);
-			img->pixels[j][i].y = round_value(img->pixels[j][i].y * sy);
+			img->pixels[j][i].x *= sx;
+			img->pixels[j][i].y *= sy;
 		}
 	}
 }
@@ -93,17 +93,33 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 	int	j;
 	int	i;
 
+	float	*depth_buffer;
+	int		buffer_size;
+	int		index;
+
+	buffer_size = WIDTH * HEIGHT;
+	depth_buffer = malloc(sizeof(float) * buffer_size);
+	if (!depth_buffer)
+		ft_perror("Malloc error (depth_buffer)", 1);
+	index = 0;
+	while (index < buffer_size)
+	{
+		depth_buffer[index] = INT_MAX;
+		index++;
+	}
+
 	j = -1;
 	while (++j < img->y)
 	{
 		i = -1;
 		while (++i < img->x)
 		{
-			//printf("x->%i, y->%i\n", i, j);
 			if (i + 1 < img->x)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1]);
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth_buffer);
 			if (j + 1 < img->y)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i]);
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth_buffer);
 		}
 	}
+
+	free(depth_buffer);
 }
