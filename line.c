@@ -103,7 +103,6 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buff
 	current_blue = get_b(start->color);
 
 	//depth
-	//total_steps = (dx > dy) ? dx : dy;
 	if (dx > dy)
 		total_steps = dx;
 	else
