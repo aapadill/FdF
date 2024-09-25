@@ -29,6 +29,7 @@
 #  define M_PI 3.14159265358979323846
 # endif
 
+# define DEG M_PI / 180
 # define ISO_ANG M_PI / 6
 
 //enums
@@ -42,9 +43,9 @@ typedef	enum e_axis
 
 typedef	enum e_transf
 {
-	s_mode = 0,
+	t_mode = 0,
 	r_mode = 1,
-	t_mode = 2, 
+	s_mode = 2,
 	no_mode = 3
 }	t_transf;
 

@@ -58,9 +58,9 @@ void	project_isometric(t_img *img, t_map *map)
 		{
 			x = map->cells[j][i].x;
 			y = map->cells[j][i].y;
-			img->pixels[j][i].x = (x - y) * cos(ISO_ANG);
-			img->pixels[j][i].y = (x + y) * sin(ISO_ANG) - map->cells[j][i].z;
-			img->pixels[j][i].z = map->cells[j][i].z;
+			img->pixels[j][i].x = (x + y) * cos(-ISO_ANG);
+			img->pixels[j][i].y = (x - y) * sin(-ISO_ANG) - map->cells[j][i].z;
+			img->pixels[j][i].z = -map->cells[j][i].z;
 		}
 	}
 }

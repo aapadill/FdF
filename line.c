@@ -146,6 +146,7 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buff
 		i++;
 	}
 }
+
 void	put_img(mlx_image_t *mlx_img, t_img *img)
 {
 	int	j;

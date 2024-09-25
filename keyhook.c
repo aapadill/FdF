@@ -93,8 +93,10 @@ void	keyhook(mlx_key_data_t keydata, void *param)
 			ft_printf("Scaling mode\n");
 		if (hook_params->transf == r_mode)
 			ft_printf("Rotation mode\n");
-		if (hook_params->transf == t_mode)
+		if (hook_params->transf == t_mode && !hook_params->centered)
 			ft_printf("Translation mode\n");
+		if (hook_params->transf == t_mode && hook_params->centered)
+			ft_printf("Translation mode not available while centered\n");
 	}
 	if (keydata.key == MLX_KEY_SPACE && keydata.action == MLX_PRESS)
 	{
