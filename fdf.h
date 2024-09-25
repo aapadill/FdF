@@ -29,6 +29,33 @@
 #  define M_PI 3.14159265358979323846
 # endif
 
+# define ISO_ANG M_PI / 6
+
+//enums
+typedef	enum e_axis
+{
+	x_axis = 0,
+	y_axis = 1,
+	z_axis = 2,
+	no_axis = 3
+}	t_axis;
+
+typedef	enum e_transf
+{
+	s_mode = 0,
+	r_mode = 1,
+	t_mode = 2, 
+	no_mode = 3
+}	t_transf;
+
+typedef	enum e_step
+{
+	s_constant = 1,
+	r_degrees = 15,
+	t_pixels = 10, 
+}	t_step;
+
+//structs
 typedef struct s_cell
 {
 	int			x;
@@ -73,6 +100,8 @@ typedef struct s_hook_params
 	mlx_t	*mlx;
 	t_img	*img;
 	mlx_image_t	*mlx_img;
+	t_transf	transf;
+	t_step	step;
 	float	rx;
 	float	ry;
 	float	rz;
@@ -82,6 +111,7 @@ typedef struct s_hook_params
 	float	sx;
 	float	sy;
 	float	sz;
+	int		centered;
 }	t_hook_params;
 
 //fdf_utils.c
@@ -89,6 +119,10 @@ void	mlx_perror();
 int		ft_perror(char *error_msg, int is_syscall);
 char	*clean(char *line);
 void	ft_free(int n, void **ptr_array);
+
+//parsing_utils.c
+void	clear_map(t_map *map);
+void	init_img(t_img *img, t_map *map);
 
 //map_parsing.c
 //int		validate_values(char **values);
@@ -100,20 +134,35 @@ void	init_img(t_img *img, t_map *map);
 
 //line.c
 void	bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buffer);
+void	put_img(mlx_image_t *mlx_img, t_img *img);
 
 //transform_map.c
 void	translate_map(t_map *map, float tx, float ty, float tz);
 void	scale_map(t_map *map, float sx, float sy, float sz);
 void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 void	project_isometric(t_img *img, t_map *map);
+void	update_img_info(t_img *img);
 void	copy_map(t_map *dst, t_map *src);
 
-void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img);
+//keyhook_utils.c
+void	copy_map(t_map *dst, t_map *src);
+void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
+
+//keyhook.c
+float	*parameter_finder(t_hook_params *h_p, t_axis axis);
+void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
+void	manual(t_hook_params *h_p, t_axis axis, char sign);
+void	keyhook(mlx_key_data_t keydata, void *param);
+
+//projection.c
+void	update_img_info(t_img *img);
+void	project_isometric(t_img *img, t_map *map);
 
 //transform_image.c
+void	scale_to_fit(t_img *img);
+void	translate_to_fit(t_img *img);
 void	scale_img(t_img *img, float sx, float sy);
 void	translate_img(t_img *img, int tx, int ty);
 void    rotate_img(t_img *img, float angle);
-void	put_img(mlx_image_t *mlx_img, t_img *img);
 
 #endif

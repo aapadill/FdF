@@ -12,6 +12,36 @@
 
 #include "fdf.h"
 
+/*
+ * Scales the projection to fit the window
+ */
+void	scale_to_fit(t_img *img)
+{
+	float	sx;
+	float	sy;
+	float	s;
+
+	sx = WIDTH / img->width;
+	sy = HEIGHT / img->height;
+	if (sx < sy)
+		s = sx;
+	else
+		s = sy;
+	scale_img(img, s, s);
+}
+
+/*
+ * Translates the projection to the center of the window
+ */
+void	translate_to_fit(t_img *img)
+{
+	int		tx;
+	int		ty;
+	tx = (WIDTH - img->width) / 2 - img->min_x;
+	ty = (HEIGHT - img->height) / 2 - img->min_y;
+	translate_img(img, tx, ty);
+}
+
 //you're assuming values are initialized
 void	scale_img(t_img *img, float sx, float sy)
 {
@@ -86,39 +116,4 @@ void    rotate_img(t_img *img, float angle)
 			img->pixels[j][i].y = x * sin(angle) + y * cos(angle);
 		}
 	}
-}
-
-void	put_img(mlx_image_t *mlx_img, t_img *img)
-{
-	int	j;
-	int	i;
-
-	float	*depth_buffer;
-	int		buffer_size;
-	int		index;
-
-	buffer_size = WIDTH * HEIGHT;
-	depth_buffer = malloc(sizeof(float) * buffer_size);
-	if (!depth_buffer)
-		ft_perror("Malloc error (depth_buffer)", 1);
-	index = 0;
-	while (index < buffer_size)
-	{
-		depth_buffer[index] = INT_MAX;
-		index++;
-	}
-
-	j = -1;
-	while (++j < img->y)
-	{
-		i = -1;
-		while (++i < img->x)
-		{
-			if (i + 1 < img->x)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth_buffer);
-			if (j + 1 < img->y)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth_buffer);
-		}
-	}
-	free(depth_buffer);
 }

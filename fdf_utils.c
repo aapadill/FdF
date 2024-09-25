@@ -28,23 +28,6 @@ int	ft_perror(char *error_msg, int is_syscall)
 	exit(EXIT_FAILURE);
 }
 
-char	*clean(char *line)
-{
-	char	*next_line;
-	int		len;
-
-	next_line = ft_strchr(line, '\n');
-	if (next_line)
-		*next_line = '\0';
-	len = ft_strlen(line);
-	while (len && line[len - 1] == ' ')
-	{
-		line[len - 1] = '\0';
-		len--;
-	}
-	return (line);
-}
-
 void	ft_free(int n, void **ptr_array)
 {
 	while (n--)

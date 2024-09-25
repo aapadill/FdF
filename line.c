@@ -146,3 +146,37 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buff
 		i++;
 	}
 }
+void	put_img(mlx_image_t *mlx_img, t_img *img)
+{
+	int	j;
+	int	i;
+
+	float	*depth_buffer;
+	int		buffer_size;
+	int		index;
+
+	buffer_size = WIDTH * HEIGHT;
+	depth_buffer = malloc(sizeof(float) * buffer_size);
+	if (!depth_buffer)
+		ft_perror("Malloc error (depth_buffer)", 1);
+	index = 0;
+	while (index < buffer_size)
+	{
+		depth_buffer[index] = INT_MAX;
+		index++;
+	}
+
+	j = -1;
+	while (++j < img->y)
+	{
+		i = -1;
+		while (++i < img->x)
+		{
+			if (i + 1 < img->x)
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth_buffer);
+			if (j + 1 < img->y)
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth_buffer);
+		}
+	}
+	free(depth_buffer);
+}
