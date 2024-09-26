@@ -124,7 +124,7 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buff
 			if (current_z < depth_buffer[index])
 			{
 				depth_buffer[index] = current_z;
-				current_color = get_rgba(current_red, current_green, current_blue, 127);
+				current_color = get_rgba(current_red, current_green, current_blue, 255);
 				mlx_put_pixel(img, x, y, current_color);
 			}
 		}
@@ -163,7 +163,7 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 	index = 0;
 	while (index < buffer_size)
 	{
-		depth_buffer[index] = INT_MAX;
+		depth_buffer[index] = (float)INT_MAX;
 		index++;
 	}
 

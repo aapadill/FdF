@@ -27,19 +27,34 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 	if (h_p->transf == s_mode)
 	{
 		h_p->step = s_constant;
-		ptr = &h_p->sx + axis;
+		if (axis == x_axis)
+			ptr = &h_p->sx;
+		if (axis == y_axis)
+			ptr = &h_p->sy;
+		if (axis == z_axis)
+			ptr = &h_p->sz;
 	}
 	if (h_p->transf == r_mode)
 	{
 		h_p->step = r_degrees;
-		ptr = &h_p->rx + axis;
+		if (axis == x_axis)
+			ptr = &h_p->rx;
+		if (axis == y_axis)
+			ptr = &h_p->ry;
+		if (axis == z_axis)
+			ptr = &h_p->rz;
 		if (*ptr >= 360)
 			*ptr -= 360;
 	}
 	if (h_p->transf == t_mode)
 	{
 		h_p->step = t_pixels;
-		ptr = &h_p->tx + axis;
+		if (axis == x_axis)
+			ptr = &h_p->tx;
+		if (axis == y_axis)
+			ptr = &h_p->ty;
+		if (axis == z_axis)
+			ptr = &h_p->tz;
 	}
 	if (ptr)
 		return (ptr);
@@ -55,20 +70,10 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	t_map	transformed_map;
 	t_img	img;
 
-	if (h_p->transf == s_mode)
-	{
-		if (sign == '+')
-			*parameter_finder(h_p, axis) += 1;
-		if (sign == '-')
-			*parameter_finder(h_p, axis) -= 1;
-	}
-	else
-	{
-		if (sign == '+')
-			*parameter_finder(h_p, axis) += h_p->step;
-		if (sign == '-')
-			*parameter_finder(h_p, axis) -= h_p->step;
-	}
+	if (sign == '+')
+		*parameter_finder(h_p, axis) += h_p->step;
+	if (sign == '-')
+		*parameter_finder(h_p, axis) -= h_p->step;
 	copy_map(&transformed_map, h_p->map);
 	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
