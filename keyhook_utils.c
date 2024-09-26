@@ -54,6 +54,8 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 		scale_to_fit(&img);
 		translate_to_fit(&img);
 	}
+	else
+		translate_img(&img, WIDTH/2, HEIGHT/2);
 	ft_memset(mlx_img->pixels, 0, mlx_img->width * mlx_img->height * sizeof(int32_t));
 	put_img(mlx_img, &img);
 	ft_free(img.y, (void **)img.pixels);

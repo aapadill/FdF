@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/21 16:14:33 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:42:13 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 	hook_params->sx = 1;
 	hook_params->sy = 1;
 	hook_params->sz = 1;
-	hook_params->centered = 0;
+	hook_params->centered = 1;
 	hook_params->transf = r_mode;
-	ft_printf("Translation mode\n");
+	ft_printf("Rotation mode\n");
 	hook_params->mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
 	if (!hook_params->mlx)
 		mlx_perror();
@@ -45,9 +45,9 @@ int main(int argc, char **argv)
 		ft_perror("No valid arguments", 0);
 	map.cells = validate_file(argv, &map.x, &map.y);
 	fill_cells(&map, argv);
+	if (map.y < 10 || map.x < 10)
+		scale_map(&map, 5, 5, 5);
 	init_hook_params(&hook_params, &map);
-	if (map.y < 50 || map.x < 50)
-		scale_map(&map, 10, 10, 10);
 	display(hook_params.mlx, &map, hook_params.mlx_img, hook_params.centered);
 	mlx_key_hook(hook_params.mlx, &keyhook, &hook_params);
 	mlx_loop(hook_params.mlx);

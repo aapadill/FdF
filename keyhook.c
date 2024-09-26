@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/24 17:35:41 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:55:56 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,20 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	t_map	transformed_map;
 	t_img	img;
 
-	if (sign == '+')
-		*parameter_finder(h_p, axis) += h_p->step;
-	if (sign == '-')
-		*parameter_finder(h_p, axis) -= h_p->step;
+	if (h_p->transf == s_mode)
+	{
+		if (sign == '+')
+			*parameter_finder(h_p, axis) += 1;
+		if (sign == '-')
+			*parameter_finder(h_p, axis) -= 1;
+	}
+	else
+	{
+		if (sign == '+')
+			*parameter_finder(h_p, axis) += h_p->step;
+		if (sign == '-')
+			*parameter_finder(h_p, axis) -= h_p->step;
+	}
 	copy_map(&transformed_map, h_p->map);
 	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
@@ -71,6 +81,8 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 		scale_to_fit(&img);
 		translate_to_fit(&img);
 	}
+	else
+		translate_img(&img, WIDTH/2, HEIGHT/2);
 	ft_memset(h_p->mlx_img->pixels, 0, h_p->mlx_img->width * h_p->mlx_img->height * sizeof(int32_t));
 	put_img(h_p->mlx_img, &img);
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)

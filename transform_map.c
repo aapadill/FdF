@@ -6,47 +6,11 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 03:24:32 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/25 19:36:56 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:41:50 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-
-void	translate_map(t_map *map, float tx, float ty, float tz)
-{
-	int	j;
-	int	i;
-
-	j = -1;
-	while (++j < map->y)
-	{
-		i = -1;
-		while (++i < map->x)
-		{
-			map->cells[j][i].x += tx;
-			map->cells[j][i].y += ty;
-			map->cells[j][i].z += tz;
-		}
-	}
-}
-
-void	scale_map(t_map *map, float sx, float sy, float sz)
-{
-	int	j;
-	int	i;
-
-	j = -1;
-	while (++j < map->y)
-	{
-		i = -1;
-		while (++i < map->x)
-		{
-			map->cells[j][i].x *= sx;
-			map->cells[j][i].y *= sy;
-			map->cells[j][i].z *= sz;
-		}
-	}
-}
 
 void compute_center(t_map *map, float *center_x, float *center_y, float *center_z)
 {
@@ -56,7 +20,7 @@ void compute_center(t_map *map, float *center_x, float *center_y, float *center_
 	float	max_y = map->cells[0][0].y;
 	float	min_z = map->cells[0][0].z;
 	float	max_z = map->cells[0][0].z;
-	int	i
+	int	i;
 	int	j;
 
 	j = -1;
@@ -81,6 +45,56 @@ void compute_center(t_map *map, float *center_x, float *center_y, float *center_
 	*center_z = (min_z + max_z) / 2;
 }
 
+void	translate_map(t_map *map, float tx, float ty, float tz)
+{
+	int	j;
+	int	i;
+
+	j = -1;
+	while (++j < map->y)
+	{
+		i = -1;
+		while (++i < map->x)
+		{
+			map->cells[j][i].x += tx;
+			map->cells[j][i].y += ty;
+			map->cells[j][i].z += tz;
+		}
+	}
+}
+
+void	scale_map(t_map *map, float sx, float sy, float sz)
+{
+	int	j;
+	int	i;
+
+	float center_x;
+	float center_y;
+	float center_z;
+
+	compute_center(map, &center_x, &center_y, &center_z);
+
+	j = -1;
+	while (++j < map->y)
+	{
+		i = -1;
+		while (++i < map->x)
+		{
+			map->cells[j][i].x -= center_x;
+			map->cells[j][i].y -= center_y;
+			//map->cells[j][i].z -= center_z;
+
+			map->cells[j][i].x *= sx;
+			map->cells[j][i].y *= sy;
+			map->cells[j][i].z *= sz;
+
+			map->cells[j][i].x += center_x;
+			map->cells[j][i].y += center_y;
+			//map->cells[j][i].z += center_z;
+		}
+	}
+}
+
 void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 {
 	int		j;
@@ -92,9 +106,9 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 	float	tmp_y;
 	float	tmp_z;
 
-	angle_x *= DEG;
-	angle_y *= DEG;
-	angle_z *= DEG;
+	angle_x *= M_PI / 180;
+	angle_y *= M_PI / 180;
+	angle_z *= M_PI / 180;
 
 	float center_x;
 	float center_y;
@@ -137,7 +151,6 @@ void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z)
 				x = tmp_x;
 				y = tmp_y;
 			}
-
 			x += center_x;
 			y += center_y;
 			z += center_z;

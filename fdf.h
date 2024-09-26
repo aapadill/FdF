@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/21 15:06:33 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:49:49 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef	enum e_step
 {
 	s_constant = 1,
 	r_degrees = 15,
-	t_pixels = 10, 
+	t_pixels = 5, 
 }	t_step;
 
 //structs
