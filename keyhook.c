@@ -22,43 +22,29 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 {
 	float	*ptr;
 
+	ptr = NULL;
 	if (axis < x_axis || axis > no_axis)
 		ft_perror("Invalid axis", 0); //free everything
 	if (h_p->transf == s_mode)
 	{
 		h_p->step = s_constant;
-		if (axis == x_axis)
-			ptr = &h_p->sx;
-		if (axis == y_axis)
-			ptr = &h_p->sy;
-		if (axis == z_axis)
-			ptr = &h_p->sz;
+		ptr = &h_p->sx + axis;
 	}
 	if (h_p->transf == r_mode)
 	{
 		h_p->step = r_degrees;
-		if (axis == x_axis)
-			ptr = &h_p->rx;
-		if (axis == y_axis)
-			ptr = &h_p->ry;
-		if (axis == z_axis)
-			ptr = &h_p->rz;
+		ptr = &h_p->rx + axis;
 		if (*ptr >= 360)
 			*ptr -= 360;
 	}
 	if (h_p->transf == t_mode)
 	{
 		h_p->step = t_pixels;
-		if (axis == x_axis)
-			ptr = &h_p->tx;
-		if (axis == y_axis)
-			ptr = &h_p->ty;
-		if (axis == z_axis)
-			ptr = &h_p->tz;
+		ptr = &h_p->tx + axis;
 	}
-	if (ptr)
-		return (ptr);
-	return (NULL);
+	if (!ptr)
+		ft_perror("Invalid transformation mode", 0); //free everything
+	return (ptr);
 }
 
 /*
