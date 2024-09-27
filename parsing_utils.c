@@ -13,6 +13,15 @@
 #include "fdf.h"
 
 /*
+ * Reaches the end of an array of pointers
+ */
+void	ft_reach_end(int n, void **ptr_array)
+{
+	while (ptr_array[++n])
+		;
+}
+
+/*
  * Replaces newline character and last spaces from a string with '\0'
  */
 char	*clean(char *line)
@@ -33,28 +42,31 @@ char	*clean(char *line)
 }
 
 /*
- * Initialize the img struct with the values from the map
+ * Initialize the img with the values of the map.
+ * mins, maxs, width and height are initialized later on 
+ * at the end of the projection with update_img_info()
+ * improv: free map, free img before perror
  */
-void init_img(t_img *img, t_map *map)
+void	init_img(t_img *img, t_map *map)
 {
-	int h;
-	int i;
+	int	h;
+	int	i;
 
 	i = -1;
 	img->x = map->x;
 	img->y = map->y;
 	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
 	if (!img->pixels)
-		ft_perror("Malloc error for img->pixels", 1); //free map? free img?
+		ft_perror("Malloc error for img->pixels", 1);
 	while (++i < img->y)
 	{
-		h = -1;
 		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
 		if (!img->pixels[i])
 		{
 			ft_free(i, (void **)img->pixels);
 			ft_perror("Malloc error for a pixels row", 1);
 		}
+		h = -1;
 		while (++h < img->x)
 			img->pixels[i][h].color = map->cells[i][h].color;
 	}

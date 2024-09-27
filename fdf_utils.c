@@ -24,7 +24,6 @@ int	ft_perror(char *error_msg, int is_syscall)
 		ft_putendl_fd(strerror(errno), STDERR_FILENO);
 	if (error_msg)
 		ft_putendl_fd(error_msg, STDERR_FILENO);
-	//free
 	exit(EXIT_FAILURE);
 }
 

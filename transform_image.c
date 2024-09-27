@@ -37,18 +37,20 @@ void	translate_to_fit(t_img *img)
 {
 	int		tx;
 	int		ty;
+
 	tx = (WIDTH - img->width) / 2 - img->min_x;
 	ty = (HEIGHT - img->height) / 2 - img->min_y;
 	translate_img(img, tx, ty);
 }
 
-//you're assuming values are initialized
+/*
+ * Scales the projection by sx and sy
+ */
 void	scale_img(t_img *img, float sx, float sy)
 {
 	int		j;
 	int		i;
 
-	//double check
 	img->min_x *= sx;
 	img->max_x *= sx;
 	img->min_y *= sy;
@@ -67,13 +69,14 @@ void	scale_img(t_img *img, float sx, float sy)
 	}
 }
 
-//you're assuming values are initialized
+/*
+ * Translates the projection by tx and ty
+ */
 void	translate_img(t_img *img, int tx, int ty)
 {
 	int		j;
 	int		i;
 
-	//double check
 	img->min_x += tx;
 	img->max_x += tx;
 	img->min_y += ty;
@@ -90,13 +93,15 @@ void	translate_img(t_img *img, int tx, int ty)
 	}
 }
 
-//you're assuming values are initialized //one angle only
-void    rotate_img(t_img *img, float angle)
+/*
+ * Rotates the projection by an angle, not implemented yet
+ */
+void	rotate_img(t_img *img, float angle)
 {
-	int     j;
-	int     i;
-	float   x;
-	float   y;
+	int		j;
+	int		i;
+	float	x;
+	float	y;
 
 	img->min_x *= cos(angle) - img->min_y * sin(angle);
 	img->max_x *= cos(angle) - img->max_y * sin(angle);

@@ -13,43 +13,32 @@
 #include "fdf.h"
 
 /*
- * Returns the address of the parameter to be modified, assumes:
- * 0) transformations are only rotation, translation and scaling
- * 1) x, y, z are defined in order in the t_hook_params struct 
- * 2) the axis are either 'x', 'y' or 'z' (only).
+ * First img projection without any map transformations
  */
-float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
+void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 {
-	float	*ptr;
+	t_img	img;
 
-	ptr = NULL;
-	if (axis < x_axis || axis > no_axis)
-		ft_perror("Invalid axis", 0); //free everything
-	if (h_p->transf == s_mode)
+	init_img(&img, map);
+	project_isometric(&img, map);
+	if (centered)
 	{
-		h_p->step = s_constant;
-		ptr = &h_p->sx + axis;
+		scale_to_fit(&img);
+		translate_to_fit(&img);
 	}
-	if (h_p->transf == r_mode)
-	{
-		h_p->step = r_degrees;
-		ptr = &h_p->rx + axis;
-		if (*ptr >= 360)
-			*ptr -= 360;
-	}
-	if (h_p->transf == t_mode)
-	{
-		h_p->step = t_pixels;
-		ptr = &h_p->tx + axis;
-	}
-	if (!ptr)
-		ft_perror("Invalid transformation mode", 0); //free everything
-	return (ptr);
+	else
+		translate_img(&img, WIDTH / 2, HEIGHT / 2);
+	ft_memset(mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
+	put_img(mlx_img, &img);
+	ft_free(img.y, (void **)img.pixels);
+	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
+		mlx_perror();
 }
 
 /*
  * Transforms the 3D map (using keyhooks) and then creates a 2D projection,
  * then, this 2D projection is copied to the canvas and displayed on the window
+ * improv: change CANVAS_SIZE for h_p->mlx_img->width and height
  */
 void	manual(t_hook_params *h_p, t_axis axis, char sign)
 {
@@ -66,21 +55,20 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
 	init_img(&img, &transformed_map);
 	project_isometric(&img, &transformed_map);
-	update_img_info(&img);
 	if (h_p->centered)
-	{
 		scale_to_fit(&img);
+	if (h_p->centered)
 		translate_to_fit(&img);
-	}
 	else
-		translate_img(&img, WIDTH/2, HEIGHT/2);
-	ft_memset(h_p->mlx_img->pixels, 0, h_p->mlx_img->width * h_p->mlx_img->height * sizeof(int32_t));
+		translate_img(&img, WIDTH / 2, HEIGHT / 2);
+	ft_memset(h_p->mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
 	put_img(h_p->mlx_img, &img);
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
 		mlx_perror();
 	ft_free(img.y, (void **)img.pixels);
 	ft_free(transformed_map.y, (void **)transformed_map.cells);
 }
+
 /*
  * Map / projection transformer using user keydata input
  */

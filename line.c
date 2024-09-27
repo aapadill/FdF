@@ -12,39 +12,7 @@
 
 #include "fdf.h"
 
-//change naming to argb
-int get_r(int rgba)
-{
-    //return ((rgba >> 24) & 0xFF);
-    return ((rgba >> 16) & 0xFF);
-}
-
-int get_g(int rgba)
-{
-    //return ((rgba >> 16) & 0xFF);
-    return ((rgba >> 8) & 0xFF);
-}
-
-int get_b(int rgba)
-{
-    //return ((rgba >> 8) & 0xFF);
-    return (rgba & 0xFF);
-}
-
-int get_a(int rgba)
-{
-    //return (rgba & 0xFF);
-    return ((rgba >> 24) & 0xFF);
-}
-
-int get_rgba(int r, int g, int b, int a)
-{
-    return (r << 24 | g << 16 | b << 8 | a);
-    //return (r << 16 | g << 8 | b);
-    //return (a << 24 | r << 16 | g << 8 | b);
-}
-
-void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buffer)
+void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth)
 {
 	//line
 	int		x;
@@ -121,9 +89,9 @@ void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth_buff
 		if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
 		{
 			index = y * WIDTH + x;
-			if (current_z < depth_buffer[index])
+			if (current_z < depth[index])
 			{
-				depth_buffer[index] = current_z;
+				depth[index] = current_z;
 				current_color = get_rgba(current_red, current_green, current_blue, 255);
 				mlx_put_pixel(img, x, y, current_color);
 			}
@@ -152,18 +120,18 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 	int	j;
 	int	i;
 
-	float	*depth_buffer;
+	float	*depth;
 	int		buffer_size;
 	int		index;
 
 	buffer_size = WIDTH * HEIGHT;
-	depth_buffer = malloc(sizeof(float) * buffer_size);
-	if (!depth_buffer)
-		ft_perror("Malloc error (depth_buffer)", 1);
+	depth = malloc(sizeof(float) * buffer_size);
+	if (!depth)
+		ft_perror("Malloc error (depth)", 1);
 	index = 0;
 	while (index < buffer_size)
 	{
-		depth_buffer[index] = (float)INT_MAX;
+		depth[index] = (float)INT_MAX;
 		index++;
 	}
 
@@ -174,10 +142,10 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 		while (++i < img->x)
 		{
 			if (i + 1 < img->x)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth_buffer);
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth);
 			if (j + 1 < img->y)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth_buffer);
+				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth);
 		}
 	}
-	free(depth_buffer);
+	free(depth);
 }

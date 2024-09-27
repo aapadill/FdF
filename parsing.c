@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   map_parsing.c                                      :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/20 15:52:25 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/27 14:54:24 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-static void	validate_values(char **values)
+/*
+ * Checks if each of the z values has only two values (z (integer) and a color)
+ * improv: Close fd if (!z)
+ */
+void	validate_values(char **values)
 {
 	char	**z;
 	int		color;
@@ -24,17 +28,14 @@ static void	validate_values(char **values)
 		z = ft_split(values[i], ',', &color);
 		if (!z)
 		{
-			//close(fd); but you dont have it
-			while(values[++i])
-				 ;
-			ft_free(i, (void**)values);
+			ft_reach_end(i, (void **)values);
+			ft_free(i, (void **)values);
 			ft_perror("Malloc error (z split)", 1);
 		}
 		if (color < 1 || color > 2 || int_overflows(z[0]))
 		{
-			while(values[++i])
-				 ;
-			ft_free(i, (void**)values);
+			ft_reach_end(i, (void **)values);
+			ft_free(i, (void **)values);
 			ft_free(color, (void **)z);
 			ft_perror("Values format error", 0);
 		}
@@ -43,10 +44,13 @@ static void	validate_values(char **values)
 	}
 }
 
-static t_cell	**init_cells(int x, int y)
+/*
+ * Allocates memory for the cells of a map
+ */
+t_cell	**init_cells(int x, int y)
 {
 	t_cell	**cells;
-	int i;
+	int		i;
 
 	i = 0;
 	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
@@ -66,7 +70,7 @@ static t_cell	**init_cells(int x, int y)
 }
 
 /*
- * Validate the file and return a 2D array of cells
+ * Validate the file, if valid, returns a 2D array of cells
  */
 t_cell	**validate_file(char **argv, int *x, int *y)
 {
@@ -106,7 +110,14 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 	return (init_cells(*x, *y));
 }
 
-static	void	insert_values(t_map	*map, char **x_values, int y)
+/*
+ * Wrap points/cells using the (x, y, z, color) values from the file
+ * and insert them into the map cells array
+ * x, y, z, color (0 if not specified)
+ * improv: Close fd if (!z)
+ * improv: avoid hardcored jump of 2 (because of 0x) at ft_atoi_base
+ */
+void	insert_values(t_map	*map, char **x_values, int y)
 {
 	int		i;
 	char	**z;
@@ -118,28 +129,17 @@ static	void	insert_values(t_map	*map, char **x_values, int y)
 		z = ft_split(x_values[i], ',', &color);
 		if (!z)
 		{
-			//close(fd); but you dont have fd
-			while (x_values[++i])
-				 ;
+			ft_reach_end(i, (void **)x_values);
 			ft_free(i, (void **)x_values);
 			ft_perror("Malloc error (z split)", 1);
 		}
 		map->cells[y][i].x = i;
 		map->cells[y][i].y = y;
 		map->cells[y][i].z = ft_atoi(z[0]);
-		if (!i && !y)
-		{
-			map->z_min = map->cells[0][0].z;
-			map->z_max = map->cells[0][0].z;
-		}
-		if (map->cells[y][i].z < map->z_min)
-			map->z_min = map->cells[y][i].z;
-		if (map->cells[y][i].z > map->z_max)
-			map->z_max = map->cells[y][i].z;
 		if (color - 1)
-			map->cells[y][i].color = ft_atoi_base(z[1] + 2, 16); //hardcored jump of 0x
+			map->cells[y][i].color = ft_atoi_base(z[1] + 2, 16);
 		else
-			map->cells[y][i].color = 0; //default color
+			map->cells[y][i].color = 0;
 		i++;
 		ft_free(color, (void **)z);
 	}

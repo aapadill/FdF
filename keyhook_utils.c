@@ -12,19 +12,57 @@
 
 #include "fdf.h"
 
-void copy_map(t_map *dst, t_map *src)
+/*
+ * Returns the address of the parameter to be modified, assumes:
+ * 0) transformations are only rotation, translation and scaling
+ * 1) x, y, z are defined in order in the t_hook_params struct 
+ * 2) the axis are either 'x', 'y' or 'z' (only).
+ * improve: you need to free everything before both ft_perror calls
+ */
+float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 {
-	int i;
-	int j;
+	float	*ptr;
 
+	ptr = NULL;
+	if (axis < x_axis || axis > no_axis)
+		ft_perror("Invalid axis", 0);
+	if (h_p->transf == s_mode)
+	{
+		h_p->step = s_constant;
+		ptr = &h_p->sx + axis;
+	}
+	if (h_p->transf == r_mode)
+	{
+		h_p->step = r_degrees;
+		ptr = &h_p->rx + axis;
+		if (*ptr >= 360)
+			*ptr -= 360;
+	}
+	if (h_p->transf == t_mode)
+	{
+		h_p->step = t_pixels;
+		ptr = &h_p->tx + axis;
+	}
+	if (!ptr)
+		ft_perror("Invalid transformation mode", 0);
+	return (ptr);
+}
+
+/*
+ * Copy the values from map src to map dst
+ * improv: free both maps before perror
+ */
+void	copy_map(t_map *dst, t_map *src)
+{
+	int	i;
+	int	j;
+
+	i = -1;
 	dst->x = src->x;
 	dst->y = src->y;
-	dst->z_min = src->z_min;
-	dst->z_max = src->z_max;
 	dst->cells = malloc(sizeof(t_cell *) * src->y);
 	if (!dst->cells)
 		ft_perror("Malloc error (copy_map)", 1);
-	i = -1;
 	while (++i < src->y)
 	{
 		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
@@ -37,28 +75,4 @@ void copy_map(t_map *dst, t_map *src)
 		while (++j < src->x)
 			dst->cells[i][j] = src->cells[i][j];
 	}
-}
-
-/*
- * First img projection without any map transformations
- */
-void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
-{
-	t_img	img;
-	
-	init_img(&img, map);
-	project_isometric(&img, map);
-	update_img_info(&img);
-	if (centered)
-	{
-		scale_to_fit(&img);
-		translate_to_fit(&img);
-	}
-	else
-		translate_img(&img, WIDTH/2, HEIGHT/2);
-	ft_memset(mlx_img->pixels, 0, mlx_img->width * mlx_img->height * sizeof(int32_t));
-	put_img(mlx_img, &img);
-	ft_free(img.y, (void **)img.pixels);
-	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
-		mlx_perror();
 }

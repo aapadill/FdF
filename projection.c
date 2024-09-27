@@ -63,4 +63,5 @@ void	project_isometric(t_img *img, t_map *map)
 			img->pixels[j][i].z = -map->cells[j][i].z;
 		}
 	}
+	update_img_info(img);
 }

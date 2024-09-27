@@ -25,11 +25,11 @@ static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 		mlx_perror();
 	hook_params->mlx_img = mlx_new_image(hook_params->mlx, WIDTH, HEIGHT);
 	if (!hook_params->mlx_img)
-		mlx_perror(); //free mlx
+		mlx_perror();
 	hook_params->map = map;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_map			map;
 	t_hook_params	hook_params;
@@ -39,8 +39,6 @@ int main(int argc, char **argv)
 		ft_perror("No valid arguments", 0);
 	map.cells = validate_file(argv, &map.x, &map.y);
 	fill_cells(&map, argv);
-	if (map.y < 10 || map.x < 10)
-		scale_map(&map, 5, 5, 5);
 	ft_bzero(&hook_params, sizeof(hook_params));
 	init_hook_params(&hook_params, &map);
 	display(hook_params.mlx, &map, hook_params.mlx_img, hook_params.centered);
