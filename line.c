@@ -16,10 +16,8 @@ void	bresenham_init(t_line *line, t_pixel *start, t_pixel *end)
 {
 	start->x = roundf(start->x);
 	start->y = roundf(start->y);
-	start->z = roundf(start->z);
 	end->x = roundf(end->x);
 	end->y = roundf(end->y);
-	end->z = roundf(end->z);
 	bresenham_helper(line, *start, *end);
 	line->cur_r = get_r(start->color);
 	line->cur_g = get_g(start->color);
@@ -45,7 +43,7 @@ void	bresenham_helper(t_line *line, t_pixel start, t_pixel end)
 		line->steps = line->dx;
 	if (!line->steps)
 		line->steps = 1;
-	line->dz_step = abs((int)end.z - (int)start.z) / line->steps;
+	line->dz_step = (end.z - start.z) / line->steps;
 	line->distance = sqrt(line->dx * line->dx + line->dy * line->dy);
 	line->dr_step = (get_r(end.color) - get_r(start.color)) / line->distance;
 	line->dg_step = (get_g(end.color) - get_g(start.color)) / line->distance;

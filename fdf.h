@@ -138,15 +138,15 @@ typedef struct s_line
 	int		sx;
 	int		sy;
 	int		steps;
-	int		dz_step;
+	float	dz_step;
 	float	distance;
-	uint8_t	dr_step;
-	uint8_t	dg_step;
-	uint8_t	db_step;
-	uint8_t	da_step;
-	uint8_t	cur_r;
-	uint8_t	cur_g;
-	uint8_t	cur_b;
+	float	dr_step;
+	float	dg_step;
+	float	db_step;
+	float	da_step;
+	float	cur_r;
+	float	cur_g;
+	float	cur_b;
 }	t_line;
 
 //fdf_utils.c
