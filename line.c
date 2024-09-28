@@ -12,129 +12,70 @@
 
 #include "fdf.h"
 
-void bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth)
+void	bresenham_init(t_line *line, t_pixel *start, t_pixel *end)
 {
-	//line
-	int		x;
-	int		y;
-	int		x2;
-	int		y2;
-	int		dx;
-	int		dy;
-	int		sx;
-	int		sy;
-	int		err;
-	int		e2;
+	start->x = roundf(start->x);
+	start->y = roundf(start->y);
+	start->z = roundf(start->z);
+	end->x = roundf(end->x);
+	end->y = roundf(end->y);
+	end->z = roundf(end->z);
+	bresenham_helper(line, *start, *end);
+	line->cur_r = get_r(start->color);
+	line->cur_g = get_g(start->color);
+	line->cur_b = get_b(start->color);
+}
 
-	//color
-	float	step;
-	float	red_step;
-	float	green_step;
-	float	blue_step;
-	float	current_red;
-	float	current_green;
-	float	current_blue;
-	uint32_t	current_color;
+void	bresenham_helper(t_line *line, t_pixel start, t_pixel end)
+{
+	line->dx = abs((int)end.x - (int)start.x);
+	line->dy = abs((int)end.y - (int)start.y);
+	line->err = 0;
+	line->e2 = 2 * line->err;
+	if (start.x < end.x)
+		line->sx = 1;
+	else
+		line->sx = -1;
+	if (start.y < end.y)
+		line->sy = 1;
+	else
+		line->sy = -1;
+	line->steps = line->dy;
+	if (line->dx > line->dy)
+		line->steps = line->dx;
+	if (!line->steps)
+		line->steps = 1;
+	line->dz_step = abs((int)end.z - (int)start.z) / line->steps;
+	line->distance = sqrt(line->dx * line->dx + line->dy * line->dy);
+	line->dr_step = (get_r(end.color) - get_r(start.color)) / line->distance;
+	line->dg_step = (get_g(end.color) - get_g(start.color)) / line->distance;
+	line->db_step = (get_b(end.color) - get_b(start.color)) / line->distance;
+	line->da_step = 255 / line->distance;
+}
 
-	//depth
-	int		total_steps;
+void	bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep)
+{
 	int		i;
-	int		index;
-	float	current_z;
-	float	z_step;
+	t_line	line;
 
-	//line
-	x = (int)roundf(start->x);
-	y = (int)roundf(start->y);
-	x2 = (int)roundf(end->x);
-	y2 = (int)roundf(end->y);
-	dx = abs(x2 - x);
-	dy = abs(y2 - y);
-	err = dx - dy;
-
-	if (x < x2)
-		sx = 1;
-	else
-		sx = -1;
-	if (y < y2)
-		sy = 1;
-	else
-		sy = -1;
-
-	//color
-	step = sqrt(dx * dx + dy * dy);
-	red_step = (get_r(end->color) - get_r(start->color)) / step;
-	green_step = (get_g(end->color) - get_g(start->color)) / step;
-	blue_step = (get_b(end->color) - get_b(start->color)) / step;
-	current_red = get_r(start->color);
-	current_green = get_g(start->color);
-	current_blue = get_b(start->color);
-
-	//depth
-	if (dx > dy)
-		total_steps = dx;
-	else
-		total_steps = dy;
-
-	if (total_steps == 0)
-		total_steps = 1;
-
-	z_step = (end->z - start->z) / total_steps;
-	current_z = start->z;
-
-	i = 0;
-
-	while (i <= total_steps)
+	bresenham_init(&line, &start, &end);
+	i = -1;
+	while (++i <= line.steps)
 	{
-		if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-		{
-			index = y * WIDTH + x;
-			if (current_z < depth[index])
-			{
-				depth[index] = current_z;
-				current_color = get_rgba(current_red, current_green, current_blue, 255);
-				mlx_put_pixel(img, x, y, current_color);
-			}
-		}
-		e2 = 2 * err;
-		if (e2 > -dy)
-		{
-			err -= dy;
-			x += sx;
-		}
-		if (e2 < dx)
-		{
-			err += dx;
-			y += sy;
-		}
-		current_red += red_step;
-		current_green += green_step; 
-		current_blue += blue_step;
-		current_z += z_step;
-		i++;
+		draw_pixel(img, &start, &line, dep);
+		update_line(&line, &start);
+		update_color(&line);
+		update_depth(&line, &start);
 	}
 }
 
 void	put_img(mlx_image_t *mlx_img, t_img *img)
 {
-	int	j;
-	int	i;
+	int		j;
+	int		i;
+	float	*d;
 
-	float	*depth;
-	int		buffer_size;
-	int		index;
-
-	buffer_size = WIDTH * HEIGHT;
-	depth = malloc(sizeof(float) * buffer_size);
-	if (!depth)
-		ft_perror("Malloc error (depth)", 1);
-	index = 0;
-	while (index < buffer_size)
-	{
-		depth[index] = (float)INT_MAX;
-		index++;
-	}
-
+	d = init_depth();
 	j = -1;
 	while (++j < img->y)
 	{
@@ -142,10 +83,10 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 		while (++i < img->x)
 		{
 			if (i + 1 < img->x)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j][i + 1], depth);
+				bresenham(mlx_img, img->pixels[j][i], img->pixels[j][i + 1], d);
 			if (j + 1 < img->y)
-				bresenham(mlx_img, &img->pixels[j][i], &img->pixels[j + 1][i], depth);
+				bresenham(mlx_img, img->pixels[j][i], img->pixels[j + 1][i], d);
 		}
 	}
-	free(depth);
+	free(d);
 }

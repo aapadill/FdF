@@ -12,34 +12,63 @@
 
 #include "fdf.h"
 
-//change naming to argb
-uint8_t		get_r(uint32_t rgba)
+void	draw_pixel(mlx_image_t *img, t_pixel *px, t_line *line, float *dep)
 {
-    //return ((rgba >> 24) & 0xFF);
-    return ((rgba >> 16) & 0xFF);
+	int			index;
+	uint32_t	color;
+
+	if (px->x >= 0 && px->x < WIDTH && px->y >= 0 && px->y < HEIGHT)
+	{
+		index = (int)px->y * WIDTH + (int)px->x;
+		if (px->z < dep[index])
+		{
+			color = get_rgba(line->cur_r, line->cur_g, line->cur_b, NO_ALPHA);
+			dep[index] = px->z;
+			mlx_put_pixel(img, px->x, px->y, color);
+		}
+	}
 }
 
-uint8_t		get_g(uint32_t rgba)
+void	update_line(t_line *line, t_pixel *start)
 {
-	//return ((rgba >> 16) & 0xFF);
-	return ((rgba >> 8) & 0xFF);
+	line->e2 = 2 * line->err;
+	if (line->e2 > -line->dy)
+	{
+		line->err -= line->dy;
+		start->x += line->sx;
+	}
+	if (line->e2 < line->dx)
+	{
+		line->err += line->dx;
+		start->y += line->sy;
+	}
 }
 
-uint8_t		get_b(uint32_t rgba)
+void	update_color(t_line *line)
 {
-	//return ((rgba >> 8) & 0xFF);
-	return (rgba & 0xFF);
+	line->cur_r += line->dr_step;
+	line->cur_g += line->dg_step;
+	line->cur_b += line->db_step;
 }
 
-uint8_t		get_a(uint32_t rgba)
+void	update_depth(t_line *line, t_pixel *start)
 {
-	//return (rgba & 0xFF);
-	return ((rgba >> 24) & 0xFF);
+	start->z += line->dz_step;
 }
 
-uint32_t	get_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+float	*init_depth(void)
 {
-	return (r << 24 | g << 16 | b << 8 | a);
-	//return (r << 16 | g << 8 | b);
-	//return (a << 24 | r << 16 | g << 8 | b);
+	int		index;
+	float	*depth;
+
+	index = 0;
+	depth = malloc(sizeof(float) * CANVAS_SIZE);
+	if (!depth)
+		ft_perror("Malloc error (depth)", 1);
+	while (index < CANVAS_SIZE)
+	{
+		depth[index] = (float)INT_MAX;
+		index++;
+	}
+	return (depth);
 }

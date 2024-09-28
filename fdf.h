@@ -19,7 +19,7 @@
 # include <stdio.h> //erase, grep printf
 # include <errno.h>
 # include <string.h>
-# include <stdint.h> //erase?
+# include <stdint.h>
 # include <math.h>
 # include <MLX42/MLX42.h>
 # define WIDTH 512
@@ -32,7 +32,7 @@
 
 # define DEG M_PI / 180
 # define ISO_ANG M_PI / 6
-
+# define NO_ALPHA 255
 
 //enums
 typedef enum e_axis
@@ -75,9 +75,9 @@ typedef struct s_map_info
 	float		max_y;
 	float		min_z;
 	float		max_z;
-	float 		center_x;
-	float 		center_y;
-	float 		center_z;
+	float		center_x;
+	float		center_y;
+	float		center_z;
 }	t_map_info;
 
 typedef struct s_map
@@ -129,63 +129,93 @@ typedef struct s_hook_params
 	int			centered;
 }	t_hook_params;
 
+typedef struct s_line
+{
+	int		dx;
+	int		dy;
+	int		err;
+	int		e2;
+	int		sx;
+	int		sy;
+	int		steps;
+	int		dz_step;
+	float	distance;
+	uint8_t	dr_step;
+	uint8_t	dg_step;
+	uint8_t	db_step;
+	uint8_t	da_step;
+	uint8_t	cur_r;
+	uint8_t	cur_g;
+	uint8_t	cur_b;
+}	t_line;
+
 //fdf_utils.c
-void	mlx_perror(void);
-int		ft_perror(char *error_msg, int is_syscall);
-char	*clean(char *line);
-void	ft_free(int n, void **ptr_array);
+void		mlx_perror(void);
+int			ft_perror(char *error_msg, int is_syscall);
+char		*clean(char *line);
+void		ft_free(int n, void **ptr_array);
 
 //parsing_utils.c
-void	ft_reach_end(int n, void **ptr_array);
-void	clear_map(t_map *map);
-void	init_img(t_img *img, t_map *map);
+void		ft_reach_end(int n, void **ptr_array);
+void		clear_map(t_map *map);
+void		init_img(t_img *img, t_map *map);
 
 //parsing.c
-void	validate_values(char **values);
-t_cell	**init_cells(int x, int y);
-t_cell	**validate_file(char **argv, int *x, int *y);
-void	insert_values(t_map *map, char **x_values, int y);
-void	fill_cells(t_map *map, char **argv);
+void		validate_values(char **values);
+t_cell		**init_cells(int x, int y);
+t_cell		**validate_file(char **argv, int *x, int *y);
+void		insert_values(t_map *map, char **x_values, int y);
+void		fill_cells(t_map *map, char **argv);
 
-//line_utils.c
+//colors_utils.c
 uint8_t		get_r(uint32_t rgba);
 uint8_t		get_g(uint32_t rgba);
 uint8_t		get_b(uint32_t rgba);
+uint8_t		get_a(uint32_t rgba);
 uint32_t	get_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
+//line_utils.c
+void		draw_pixel(mlx_image_t *img, t_pixel *px, t_line *line, float *dep);
+void		update_line(t_line *line, t_pixel *start);
+void		update_color(t_line *line);
+void		update_depth(t_line *line, t_pixel *start);
+float		*init_depth(void);
+
 //line.c
-void	bresenham(mlx_image_t *img, t_pixel *start, t_pixel *end, float *depth);
-void	put_img(mlx_image_t *mlx_img, t_img *img);
+void		bresenham_init(t_line *line, t_pixel *start, t_pixel *end);
+void		bresenham_helper(t_line *line, t_pixel start, t_pixel end);
+void		bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep);
+void		put_img(mlx_image_t *mlx_img, t_img *img);
 
 //transform_map_utils.c
-void	compute_center(t_map *map);
-void	rotate_x_axis(float *y, float *z, float angle);
-void	rotate_y_axis(float *x, float *z, float angle);
-void	rotate_z_axis(float *x, float *y, float angle);
+void		compute_center(t_map *map);
+void		rotate_x_axis(float *y, float *z, float angle);
+void		rotate_y_axis(float *x, float *z, float angle);
+void		rotate_z_axis(float *x, float *y, float angle);
 
 //transform_map.c
-void	translate_map(t_map *map, float tx, float ty, float tz);
-void	scale_map(t_map *map, float sx, float sy, float sz);
-void	rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
+void		translate_map(t_map *map, float tx, float ty, float tz);
+void		scale_map(t_map *map, float sx, float sy, float sz);
+void		rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 
 //keyhook_utils.c
-float	*parameter_finder(t_hook_params *h_p, t_axis axis);
-void	copy_map(t_map *dst, t_map *src);
+float		*parameter_finder(t_hook_params *h_p, t_axis axis);
+void		copy_map(t_map *dst, t_map *src);
 
 //keyhook.c
-void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
-void	manual(t_hook_params *h_p, t_axis axis, char sign);
-void	keyhook(mlx_key_data_t keydata, void *param);
+void		display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
+void		manual(t_hook_params *h_p, t_axis axis, char sign);
+void		keyhook(mlx_key_data_t keydata, void *param);
 
 //projection.c
-void	update_img_info(t_img *img);
-void	project_isometric(t_img *img, t_map *map);
+void		update_img_info(t_img *img);
+void		project_isometric(t_img *img, t_map *map);
 
 //transform_image.c
-void	scale_to_fit(t_img *img);
-void	translate_to_fit(t_img *img);
-void	scale_img(t_img *img, float sx, float sy);
-void	translate_img(t_img *img, int tx, int ty);
-void	rotate_img(t_img *img, float angle);
+void		scale_to_fit(t_img *img);
+void		translate_to_fit(t_img *img);
+void		scale_img(t_img *img, float sx, float sy);
+void		translate_img(t_img *img, int tx, int ty);
+void		rotate_img(t_img *img, float angle);
 
 #endif
