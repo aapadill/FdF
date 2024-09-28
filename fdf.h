@@ -152,17 +152,17 @@ typedef struct s_line
 //fdf_utils.c
 void		mlx_perror(void);
 int			ft_perror(char *error_msg, int is_syscall);
-char		*clean(char *line);
 void		ft_free(int n, void **ptr_array);
 
 //parsing_utils.c
 void		ft_reach_end(int n, void **ptr_array);
-void		clear_map(t_map *map);
+char		*clean(char *line);
+void		fill_cells_helper(t_map *map, char *line, int fd, int y);
+t_cell		**init_cells(int x, int y);
 void		init_img(t_img *img, t_map *map);
 
 //parsing.c
 void		validate_values(char **values);
-t_cell		**init_cells(int x, int y);
 t_cell		**validate_file(char **argv, int *x, int *y);
 void		insert_values(t_map *map, char **x_values, int y);
 void		fill_cells(t_map *map, char **argv);
@@ -188,6 +188,7 @@ void		bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep);
 void		put_img(mlx_image_t *mlx_img, t_img *img);
 
 //transform_map_utils.c
+void		update_min_max(t_map *map, int i, int j);
 void		compute_center(t_map *map);
 void		rotate_x_axis(float *y, float *z, float angle);
 void		rotate_y_axis(float *x, float *z, float angle);
@@ -197,6 +198,12 @@ void		rotate_z_axis(float *x, float *y, float angle);
 void		translate_map(t_map *map, float tx, float ty, float tz);
 void		scale_map(t_map *map, float sx, float sy, float sz);
 void		rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
+
+//keyhook_handler.c
+void		handle_tab(t_hook_params *hook_params);
+void		handle_space(t_hook_params *hook_params);
+void		handle_escape(t_hook_params *hook_params);
+void		handle_wasdqe(mlx_key_data_t keydata, t_hook_params *hook_params);
 
 //keyhook_utils.c
 float		*parameter_finder(t_hook_params *h_p, t_axis axis);

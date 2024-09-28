@@ -70,50 +70,22 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 }
 
 /*
- * Map / projection transformer using user keydata input
+ * Map or projection transformer using user keydata input
  */
 void	keyhook(mlx_key_data_t keydata, void *param)
 {
 	t_hook_params	*hook_params;
 
 	hook_params = (t_hook_params *)param;
-	if (keydata.key == MLX_KEY_TAB && keydata.action == MLX_PRESS)
+	if (keydata.action == MLX_PRESS)
 	{
-		hook_params->transf = (hook_params->transf + 1) % 3;
-		if (hook_params->transf == s_mode)
-			ft_printf("Scaling mode\n");
-		if (hook_params->transf == r_mode)
-			ft_printf("Rotation mode\n");
-		if (hook_params->transf == t_mode && !hook_params->centered)
-			ft_printf("Translation mode\n");
-		if (hook_params->transf == t_mode && hook_params->centered)
-			ft_printf("Translation mode not available while centered\n");
-	}
-	if (keydata.key == MLX_KEY_SPACE && keydata.action == MLX_PRESS)
-	{
-		hook_params->centered = !hook_params->centered;
-		manual(hook_params, no_axis, 0);
-	}
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-	{
-		mlx_delete_image(hook_params->mlx, hook_params->mlx_img);
-		mlx_terminate(hook_params->mlx);
-		ft_free(hook_params->map->y, (void **)hook_params->map->cells);
-		exit(EXIT_SUCCESS);
+		if (keydata.key == MLX_KEY_TAB)
+			handle_tab(hook_params);
+		if (keydata.key == MLX_KEY_SPACE)
+			handle_space(hook_params);
+		if (keydata.key == MLX_KEY_ESCAPE)
+			handle_escape(hook_params);
 	}
 	if (keydata.action == MLX_REPEAT || keydata.action == MLX_PRESS)
-	{
-		if (keydata.key == MLX_KEY_W)
-			manual(hook_params, y_axis, '+');
-		if (keydata.key == MLX_KEY_S)
-			manual(hook_params, y_axis, '-');
-		if (keydata.key == MLX_KEY_D)
-			manual(hook_params, x_axis, '+');
-		if (keydata.key == MLX_KEY_A)
-			manual(hook_params, x_axis, '-');
-		if (keydata.key == MLX_KEY_E)
-			manual(hook_params, z_axis, '+');
-		if (keydata.key == MLX_KEY_Q)
-			manual(hook_params, z_axis, '-');
-	}
+		handle_wasdqe(keydata, hook_params);
 }

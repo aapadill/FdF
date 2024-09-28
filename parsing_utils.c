@@ -42,6 +42,51 @@ char	*clean(char *line)
 }
 
 /*
+ * Helper function for fill_cells
+ * improv: ft_free(x, (void **)x_values) before perror
+ */
+void	fill_cells_helper(t_map *map, char *line, int fd, int y)
+{
+	int		x;
+	char	**x_values;
+
+	x_values = ft_split(clean(line), ' ', &x);
+	free(line);
+	if (!x_values)
+	{
+		close(fd);
+		ft_perror("ft_split error", 1);
+	}
+	insert_values(map, x_values, y);
+	ft_free(x, (void **)x_values);
+}
+
+/*
+ * Allocates memory for the cells of a map
+ */
+t_cell	**init_cells(int x, int y)
+{
+	t_cell	**cells;
+	int		i;
+
+	i = 0;
+	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
+	if (!cells)
+		ft_perror("Malloc error for cells", 1);
+	while (i < y)
+	{
+		cells[i] = (t_cell *)malloc(sizeof(t_cell) * x);
+		if (!cells[i])
+		{
+			ft_free(i, (void **)cells);
+			ft_perror("Malloc error for a map row", 1);
+		}
+		i++;
+	}
+	return (cells);
+}
+
+/*
  * Initialize the img with the values of the map.
  * mins, maxs, width and height are initialized later on 
  * at the end of the projection with update_img_info()

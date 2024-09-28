@@ -45,28 +45,32 @@ void	validate_values(char **values)
 }
 
 /*
- * Allocates memory for the cells of a map
+ * Validates the line from the file
+ * Checks if the values are integers and if dimension of the map is consistent
  */
-t_cell	**init_cells(int x, int y)
+void	validate_line(char *line, int *x, int *y, int fd)
 {
-	t_cell	**cells;
-	int		i;
+	int		values;
+	char	**splitted_line;
 
-	i = 0;
-	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
-	if (!cells)
-		ft_perror("Malloc error for cells", 1);
-	while (i < y)
+	splitted_line = ft_split(clean(line), ' ', &values);
+	free(line);
+	if (!splitted_line)
 	{
-		cells[i] = (t_cell *)malloc(sizeof(t_cell) * x);
-		if (!cells[i])
-		{
-			ft_free(i, (void **)cells);
-			ft_perror("Malloc error for a map row", 1);
-		}
-		i++;
+		close(fd);
+		ft_perror("Malloc error (x split)", 1);
 	}
-	return (cells);
+	validate_values(splitted_line);
+	if (!*y)
+		*x = values;
+	else if (*x != values)
+	{
+		close(fd);
+		ft_free(values, (void **)splitted_line);
+		ft_perror("Map error (your file is missing some x values)", 0);
+	}
+	(*y)++;
+	ft_free(values, (void **)splitted_line);
 }
 
 /*
@@ -76,8 +80,6 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 {
 	int		fd;
 	char	*line;
-	int		values;
-	char	**splitted_line;
 
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
@@ -87,24 +89,7 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 		line = get_next_line(fd);
 		if (!line)
 			break ;
-		splitted_line = ft_split(clean(line), ' ', &values);
-		free(line);
-		if (!splitted_line)
-		{
-			close(fd);
-			ft_perror("Malloc error (x split)", 1);
-		}
-		validate_values(splitted_line);
-		if (!*y)
-			*x = values;
-		else if (*x != values)
-		{
-			close(fd);
-			ft_free(values, (void **)splitted_line);
-			ft_perror("Map error (your file is missing some x values)", 0);
-		}
-		(*y)++;
-		ft_free(values, (void **)splitted_line);
+		validate_line(line, x, y, fd);
 	}
 	close(fd);
 	return (init_cells(*x, *y));
@@ -152,9 +137,7 @@ void	fill_cells(t_map *map, char **argv)
 {
 	int		fd;
 	char	*line;
-	int		x;
 	int		y;
-	char	**x_values;
 
 	y = 0;
 	fd = open(argv[1], O_RDONLY);
@@ -165,16 +148,7 @@ void	fill_cells(t_map *map, char **argv)
 		line = get_next_line(fd);
 		if (!line)
 			break ;
-		x_values = ft_split(clean(line), ' ', &x);
-		free(line);
-		if (!x_values)
-		{
-			close(fd);
-			ft_free(x, (void **)x_values);
-			ft_perror("ft_split error", 1);
-		}
-		insert_values(map, x_values, y);
-		ft_free(x, (void **)x_values);
+		fill_cells_helper(map, line, fd, y);
 		y++;
 	}
 	close(fd);
