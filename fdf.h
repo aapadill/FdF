@@ -16,7 +16,6 @@
 # include "libft/libft.h"
 # include "ft_printf/include/ft_printf.h"
 # include <fcntl.h>
-//# include <stdio.h> //erase, grep printf
 # include <errno.h>
 # include <string.h>
 # include <stdint.h>
@@ -135,9 +134,9 @@ typedef struct s_hook_params
 	float		sx;
 	float		sy;
 	float		sz;
-	float       txx;
-	float       tyy;
-	float       s;
+	float		txx;
+	float		tyy;
+	float		s;
 	int			centered;
 }	t_hook_params;
 
