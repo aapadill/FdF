@@ -174,6 +174,7 @@ void		init_img(t_img *img, t_map *map);
 
 //parsing.c
 void		validate_values(char **values);
+void		validate_line(char *line, int *x, int *y, int fd);
 t_cell		**validate_file(char **argv, int *x, int *y);
 void		insert_values(t_map *map, char **x_values, int y);
 void		fill_cells(t_map *map, char **argv);
