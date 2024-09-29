@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/27 14:54:24 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/09/29 16:13:27 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 		validate_line(line, x, y, fd);
 	}
 	close(fd);
+	if (!*x || !*y)
+		ft_perror("Empty file", 0);
 	return (init_cells(*x, *y));
 }
 
