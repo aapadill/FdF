@@ -17,6 +17,7 @@ static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 	hook_params->sx = 1;
 	hook_params->sy = 1;
 	hook_params->sz = 1;
+	hook_params->s = 1;
 	hook_params->centered = 1;
 	hook_params->transf = r_mode;
 	ft_printf("Rotation mode\n");

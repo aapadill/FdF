@@ -16,7 +16,7 @@
 # include "libft/libft.h"
 # include "ft_printf/include/ft_printf.h"
 # include <fcntl.h>
-# include <stdio.h> //erase, grep printf
+//# include <stdio.h> //erase, grep printf
 # include <errno.h>
 # include <string.h>
 # include <stdint.h>
@@ -33,6 +33,7 @@
 # define DEG M_PI / 180
 # define ISO_ANG M_PI / 6
 # define NO_ALPHA 255
+# define DISTANCE 1000
 
 //enums
 typedef enum e_axis
@@ -50,6 +51,13 @@ typedef enum e_transf
 	s_mode = 2,
 	no_mode = 3
 }	t_transf;
+
+typedef enum e_projection
+{
+	i_proj = 0,
+	p_proj = 1,
+	c_proj = 2,
+}	t_projec;
 
 typedef enum e_step
 {
@@ -117,6 +125,7 @@ typedef struct s_hook_params
 	mlx_image_t	*mlx_img;
 	t_transf	transf;
 	t_step		step;
+	t_projec	projec;
 	float		rx;
 	float		ry;
 	float		rz;
@@ -126,6 +135,9 @@ typedef struct s_hook_params
 	float		sx;
 	float		sy;
 	float		sz;
+	float       txx;
+	float       tyy;
+	float       s;
 	int			centered;
 }	t_hook_params;
 
@@ -201,9 +213,14 @@ void		rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 
 //keyhook_handler.c
 void		handle_tab(t_hook_params *hook_params);
+void		handle_numbers(keys_t key, t_hook_params *hook_params);
 void		handle_space(t_hook_params *hook_params);
 void		handle_escape(t_hook_params *hook_params);
 void		handle_wasdqe(mlx_key_data_t keydata, t_hook_params *hook_params);
+
+//keyhook_handler_two.c
+void		post_transform(t_img *img, t_hook_params *h_p);
+void		handle_post(mlx_key_data_t keydata, t_hook_params *hook_params);
 
 //keyhook_utils.c
 float		*parameter_finder(t_hook_params *h_p, t_axis axis);
@@ -215,8 +232,11 @@ void		manual(t_hook_params *h_p, t_axis axis, char sign);
 void		keyhook(mlx_key_data_t keydata, void *param);
 
 //projection.c
-void		update_img_info(t_img *img);
+void		project(t_img *img, t_map *map, t_projec projec);
 void		project_isometric(t_img *img, t_map *map);
+void		project_parallel(t_img *img, t_map *map);
+void		project_conic(t_img *img, t_map *map);
+void		update_img_info(t_img *img);
 
 //transform_image.c
 void		scale_to_fit(t_img *img);

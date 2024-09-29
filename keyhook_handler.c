@@ -22,12 +22,38 @@ void	handle_tab(t_hook_params *hook_params)
 	if (hook_params->transf == t_mode && !hook_params->centered)
 		ft_printf("Translation mode\n");
 	if (hook_params->transf == t_mode && hook_params->centered)
-		ft_printf("Translating while centered won't be visible\n");
+		ft_printf("Translating while centered might not be visible\n");
+}
+
+void	handle_numbers(keys_t key, t_hook_params *hook_params)
+{
+	if (key == MLX_KEY_1)
+	{
+		hook_params->projec = i_proj;
+		manual(hook_params, no_axis, 0);
+		ft_printf("Isometric Projection\n");
+	}
+	if (key == MLX_KEY_2)
+	{
+		hook_params->projec = p_proj;
+		manual(hook_params, no_axis, 0);
+		ft_printf("Parallel Projection\n");
+	}
+	if (key == MLX_KEY_3)
+	{
+		hook_params->projec = c_proj;
+		manual(hook_params, no_axis, 0);
+		ft_printf("Conic Projection\n");
+	}
 }
 
 void	handle_space(t_hook_params *hook_params)
 {
 	hook_params->centered = !hook_params->centered;
+	if (hook_params->centered)
+		ft_printf("Centered on\n");
+	if (!hook_params->centered)
+		ft_printf("Centered off\n");
 	manual(hook_params, no_axis, 0);
 }
 

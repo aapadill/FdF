@@ -23,6 +23,7 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 	project_isometric(&img, map);
 	if (centered)
 	{
+		ft_printf("Centered on\n");
 		scale_to_fit(&img);
 		translate_to_fit(&img);
 	}
@@ -54,13 +55,8 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
 	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
 	init_img(&img, &transformed_map);
-	project_isometric(&img, &transformed_map);
-	if (h_p->centered)
-		scale_to_fit(&img);
-	if (h_p->centered)
-		translate_to_fit(&img);
-	else
-		translate_img(&img, WIDTH / 2, HEIGHT / 2);
+	project(&img, &transformed_map, h_p->projec);
+	post_transform(&img, h_p);
 	ft_memset(h_p->mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
 	put_img(h_p->mlx_img, &img);
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
@@ -85,7 +81,14 @@ void	keyhook(mlx_key_data_t keydata, void *param)
 			handle_space(hook_params);
 		if (keydata.key == MLX_KEY_ESCAPE)
 			handle_escape(hook_params);
+		if (keydata.key == MLX_KEY_1
+			|| keydata.key == MLX_KEY_2
+			|| keydata.key == MLX_KEY_3)
+			handle_numbers(keydata.key, hook_params);
 	}
 	if (keydata.action == MLX_REPEAT || keydata.action == MLX_PRESS)
+	{
 		handle_wasdqe(keydata, hook_params);
+		handle_post(keydata, hook_params);
+	}
 }
