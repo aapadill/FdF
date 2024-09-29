@@ -215,7 +215,6 @@ void		rotate_map(t_map *map, float angle_x, float angle_y, float angle_z);
 void		handle_tab(t_hook_params *hook_params);
 void		handle_numbers(keys_t key, t_hook_params *hook_params);
 void		handle_space(t_hook_params *hook_params);
-void		handle_escape(t_hook_params *hook_params);
 void		handle_wasdqe(mlx_key_data_t keydata, t_hook_params *hook_params);
 
 //keyhook_handler_two.c
@@ -229,6 +228,7 @@ void		copy_map(t_map *dst, t_map *src);
 //keyhook.c
 void		display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
 void		manual(t_hook_params *h_p, t_axis axis, char sign);
+void		close_hook(void *param);
 void		keyhook(mlx_key_data_t keydata, void *param);
 
 //projection.c

@@ -45,8 +45,6 @@ int	main(int argc, char **argv)
 	display(hook_params.mlx, &map, hook_params.mlx_img, hook_params.centered);
 	mlx_key_hook(hook_params.mlx, &keyhook, &hook_params);
 	mlx_loop(hook_params.mlx);
-	ft_free(map.y, (void **)map.cells);
-	mlx_delete_image(hook_params.mlx, hook_params.mlx_img);
-	mlx_terminate(hook_params.mlx);
+	mlx_close_hook(hook_params.mlx, &close_hook, hook_params.mlx);
 	return (EXIT_SUCCESS);
 }

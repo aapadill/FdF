@@ -65,6 +65,17 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	ft_free(transformed_map.y, (void **)transformed_map.cells);
 }
 
+void	close_hook(void *param)
+{
+	t_hook_params	*hook_params;
+
+	hook_params = (t_hook_params *)param;
+	mlx_delete_image(hook_params->mlx, hook_params->mlx_img);
+	mlx_terminate(hook_params->mlx);
+	ft_free(hook_params->map->y, (void **)hook_params->map->cells);
+	exit(EXIT_SUCCESS);
+}
+
 /*
  * Map or projection transformer using user keydata input
  */
@@ -80,7 +91,7 @@ void	keyhook(mlx_key_data_t keydata, void *param)
 		if (keydata.key == MLX_KEY_SPACE)
 			handle_space(hook_params);
 		if (keydata.key == MLX_KEY_ESCAPE)
-			handle_escape(hook_params);
+			close_hook(hook_params);
 		if (keydata.key == MLX_KEY_1
 			|| keydata.key == MLX_KEY_2
 			|| keydata.key == MLX_KEY_3)

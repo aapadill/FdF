@@ -57,14 +57,6 @@ void	handle_space(t_hook_params *hook_params)
 	manual(hook_params, no_axis, 0);
 }
 
-void	handle_escape(t_hook_params *hook_params)
-{
-	mlx_delete_image(hook_params->mlx, hook_params->mlx_img);
-	mlx_terminate(hook_params->mlx);
-	ft_free(hook_params->map->y, (void **)hook_params->map->cells);
-	exit(EXIT_SUCCESS);
-}
-
 void	handle_wasdqe(mlx_key_data_t keydata, t_hook_params *hook_params)
 {
 	if (keydata.key == MLX_KEY_W)
