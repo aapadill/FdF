@@ -80,10 +80,10 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 {
 	int		fd;
 	char	*line;
-	int		file_name_size;
+	int		file_n_size;
 
-	file_name_size = ft_strlen(argv[1]);
-	if (file_name_size < 5 || ft_strncmp(argv[1] + file_name_size - 4, ".fdf", 4))
+	file_n_size = ft_strlen(argv[1]);
+	if (file_n_size < 5 || ft_strncmp(argv[1] + file_n_size - 4, ".fdf", 4))
 		ft_perror("Invalid file extension", 0);
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
