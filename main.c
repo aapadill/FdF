@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/29 16:11:08 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/10/03 13:35:17 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ static	void	normalize_map(t_map *map)
 
 	compute_center(map);
 	find_range(map, &range, &min_val);
+	if (range < 500)
+		return ;
 	i = -1;
 	while (++i < map->y)
 	{
@@ -69,6 +71,7 @@ static	void	normalize_map(t_map *map)
 			map->cells[i][j].z = (map->cells[i][j].z - min_val) / range;
 		}
 	}
+	scale_map(map, 100, 100, 100);
 }
 
 int	main(int argc, char **argv)
@@ -88,5 +91,6 @@ int	main(int argc, char **argv)
 	mlx_key_hook(hook_params.mlx, &keyhook, &hook_params);
 	mlx_loop(hook_params.mlx);
 	mlx_close_hook(hook_params.mlx, &close_hook, hook_params.mlx);
+	close_hook(&hook_params);
 	return (EXIT_SUCCESS);
 }

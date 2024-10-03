@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 08:33:05 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/29 08:33:07 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/10/02 16:13:35 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ void	post_transform(t_img *img, t_hook_params *h_p)
 void	handle_post(mlx_key_data_t keydata, t_hook_params *hook_params)
 {
 	if (keydata.key == MLX_KEY_RIGHT)
-		hook_params->txx += abs((int)hook_params->s);
+		hook_params->txx += 1;
 	if (keydata.key == MLX_KEY_LEFT)
-		hook_params->txx -= abs((int)hook_params->s);
+		hook_params->txx -= 1;
 	if (keydata.key == MLX_KEY_DOWN)
-		hook_params->tyy += abs((int)hook_params->s);
+		hook_params->tyy += 1;
 	if (keydata.key == MLX_KEY_UP)
-		hook_params->tyy -= abs((int)hook_params->s);
+		hook_params->tyy -= 1;
 	if (keydata.key == MLX_KEY_Z)
 		hook_params->s += 1.1;
 	if (keydata.key == MLX_KEY_X)
