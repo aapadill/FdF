@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 17:32:57 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:28:00 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 	else
 		translate_img(&img, WIDTH / 2, HEIGHT / 2);
 	ft_memset(mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
-	put_img(mlx_img, &img);
+	if (put_img(mlx_img, &img) == -1)
+		return (-1);
 	ft_free(img.y, (void **)img.pixels);
 	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
 		mlx_perror();
@@ -43,7 +44,7 @@ int	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
  * then, this 2D projection is copied to the canvas and displayed on the window
  * improv: change CANVAS_SIZE for h_p->mlx_img->width and height
  */
-void	manual(t_hook_params *h_p, t_axis axis, char sign)
+int	manual(t_hook_params *h_p, t_axis axis, char sign)
 {
 	t_map	transformed_map;
 	t_img	img;
@@ -56,15 +57,18 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
 	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
-	init_img(&img, &transformed_map);
+	if (init_img(&img, &transformed_map) == -1)
+		return (-1);
 	project(&img, &transformed_map, h_p->projec);
 	post_transform(&img, h_p);
 	ft_memset(h_p->mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
-	put_img(h_p->mlx_img, &img);
+	if (put_img(h_p->mlx_img, &img) == -1)
+		return (-1);
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
 		mlx_perror();
 	ft_free(img.y, (void **)img.pixels);
 	ft_free(transformed_map.y, (void **)transformed_map.cells);
+	return (1);
 }
 
 void	close_hook(void *param)

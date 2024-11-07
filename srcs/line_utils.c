@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 15:07:13 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/27 15:07:18 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:46:31 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,18 @@ void	update_depth(t_line *line, t_pixel *start)
 	start->z += line->dz_step;
 }
 
-float	*init_depth(void)
+int	init_depth(float **depth)
 {
-	int		index;
-	float	*depth;
+	int	index;
 
 	index = 0;
-	depth = malloc(sizeof(float) * CANVAS_SIZE);
-	if (!depth)
-		ft_perror("Malloc error (depth)", 1);
+	*depth = malloc(sizeof(float) * CANVAS_SIZE);
+	if (!*depth)
+		return (-1);
 	while (index < CANVAS_SIZE)
 	{
-		depth[index] = (float)INT_MAX;
+		(*depth)[index] = (float)INT_MAX;
 		index++;
 	}
-	return (depth);
+	return (1);
 }

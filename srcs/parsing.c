@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 16:39:59 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:52:21 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Checks if each of the z values has only two values (z (integer) and a color)
  * improv: Close fd if (!z)?
  */
-void	validate_values(char **values, int n,  int fd)
+void	validate_values(char **values, int n, int fd)
 {
 	char	**z;
 	int		color;
