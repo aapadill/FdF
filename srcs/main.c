@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 13:22:42 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:51:56 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 	hook_params->map = map;
 }
 
-static	void	find_range(t_map *map, float *range, float *min_val)
+static void	find_range(t_map *map, float *range, float *min_val)
 {
 	float	max_val;
 
@@ -56,7 +56,7 @@ static	void	find_range(t_map *map, float *range, float *min_val)
 		*range = 1;
 }
 
-static	void	normalize_map(t_map *map)
+static void	normalize_map(t_map *map)
 {
 	float	range;
 	float	min_val;

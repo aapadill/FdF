@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/24 18:22:22 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:55:48 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ char	*clean(char *line)
 
 /*
  * Helper function for fill_cells
- * improv: ft_free(x, (void **)x_values) before perror
  */
 void	fill_cells_helper(t_map *map, char *line, int fd, int y)
 {
@@ -55,6 +54,7 @@ void	fill_cells_helper(t_map *map, char *line, int fd, int y)
 	if (!x_values)
 	{
 		close(fd);
+		ft_free(map->y, (void **)map->cells);
 		ft_perror("ft_split error", 1);
 	}
 	insert_values(map, x_values, y);
