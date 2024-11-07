@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/25 19:55:56 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 17:32:57 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 /*
  * First img projection without any map transformations
  */
-void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
+int	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 {
 	t_img	img;
 
-	init_img(&img, map);
+	if (init_img(&img, map) == -1)
+		return (-1);
 	project_isometric(&img, map);
 	if (centered)
 	{
@@ -34,6 +35,7 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 	ft_free(img.y, (void **)img.pixels);
 	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
 		mlx_perror();
+	return (0);
 }
 
 /*

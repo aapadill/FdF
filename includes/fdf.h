@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 16:08:56 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 17:27:15 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void		ft_reach_end(int n, void **ptr_array);
 char		*clean(char *line);
 void		fill_cells_helper(t_map *map, char *line, int fd, int y);
 t_cell		**init_cells(int x, int y);
-void		init_img(t_img *img, t_map *map);
+int			init_img(t_img *img, t_map *map);
 
 //parsing.c
 void		validate_values(char **values, int n,  int fd);
@@ -226,7 +226,7 @@ float		*parameter_finder(t_hook_params *h_p, t_axis axis);
 void		copy_map(t_map *dst, t_map *src);
 
 //keyhook.c
-void		display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
+int			display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);
 void		manual(t_hook_params *h_p, t_axis axis, char sign);
 void		close_hook(void *param);
 void		keyhook(mlx_key_data_t keydata, void *param);

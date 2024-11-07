@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 13:51:56 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 17:39:49 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static void	normalize_map(t_map *map)
 int	main(int argc, char **argv)
 {
 	t_map			map;
-	t_hook_params	hook_params;
+	t_hook_params	h_p;
 
 	map.x = 0;
 	map.y = 0;
@@ -92,13 +92,17 @@ int	main(int argc, char **argv)
 		ft_perror("No valid arguments", 0);
 	map.cells = validate_file(argv, &map.x, &map.y);
 	fill_cells(&map, argv);
-	ft_bzero(&hook_params, sizeof(hook_params));
+	ft_bzero(&h_p, sizeof(h_p));
 	normalize_map(&map);
-	init_hook_params(&hook_params, &map);
-	display(hook_params.mlx, &map, hook_params.mlx_img, hook_params.centered);
-	mlx_key_hook(hook_params.mlx, &keyhook, &hook_params);
-	mlx_loop(hook_params.mlx);
-	mlx_close_hook(hook_params.mlx, &close_hook, hook_params.mlx);
-	close_hook(&hook_params);
+	init_hook_params(&h_p, &map);
+	if (display(h_p.mlx, &map, h_p.mlx_img, h_p.centered) == -1)
+	{
+		mlx_terminate(h_p.mlx);
+		mlx_perror();
+	}
+	mlx_key_hook(h_p.mlx, &keyhook, &h_p);
+	mlx_loop(h_p.mlx);
+	mlx_close_hook(h_p.mlx, &close_hook, h_p.mlx);
+	close_hook(&h_p);
 	return (EXIT_SUCCESS);
 }

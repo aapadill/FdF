@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 16:50:47 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 17:47:20 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ t_cell	**init_cells(int x, int y)
  * at the end of the projection with update_img_info()
  * improv: free map, free img before perror
  */
-void	init_img(t_img *img, t_map *map)
+int	init_img(t_img *img, t_map *map)
 {
 	int	h;
 	int	i;
@@ -105,7 +105,8 @@ void	init_img(t_img *img, t_map *map)
 	if (!img->pixels)
 	{
 		ft_free(map->y, (void **)map->cells);
-		ft_perror("Malloc error for img->pixels", 1);
+		ft_putendl_fd("Malloc error for img->pixels", 2);
+		return (-1);
 	}
 	while (++i < img->y)
 	{
@@ -114,10 +115,12 @@ void	init_img(t_img *img, t_map *map)
 		{
 			ft_free(i, (void **)img->pixels);
 			ft_free(map->y, (void **)map->cells);
-			ft_perror("Malloc error for a pixels row", 1);
+			ft_putendl_fd("Malloc error for a pixels row", 2);
+			return (-1);
 		}
 		h = -1;
 		while (++h < img->x)
 			img->pixels[i][h].color = map->cells[i][h].color;
 	}
+	return (0);
 }
