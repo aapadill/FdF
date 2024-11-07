@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 18:28:00 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 19:19:14 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,10 @@ int	manual(t_hook_params *h_p, t_axis axis, char sign)
 	post_transform(&img, h_p);
 	ft_memset(h_p->mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
 	if (put_img(h_p->mlx_img, &img) == -1)
+	{
+		ft_free(transformed_map.y, (void **)transformed_map.cells);
 		return (-1);
+	}
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
 		mlx_perror();
 	ft_free(img.y, (void **)img.pixels);
