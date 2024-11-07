@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   gc_alloc.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/10 14:50:23 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 13:02:37 by aapadill         ###   ########.fr       */
+/*   Created: 2024/11/04 11:23:36 by aapadill          #+#    #+#             */
+/*   Updated: 2024/11/04 12:17:24 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#ifndef GC_ALLOC_H
+# define GC_ALLOC_H
 
-size_t	ft_strlen(const char *s)
+#include "libft.h"
+
+typedef struct s_garbage_collector
 {
-	size_t	len;
+	t_list	*head;
+}	t_gc;
 
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
-}
+#endif

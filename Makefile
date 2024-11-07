@@ -1,22 +1,37 @@
 NAME		= fdf
 CC			= cc
-CFLAGS		= -Wextra -Wall -Werror #-O2 -Ofast -g #-fsanitize=address -Wunreachable-code 
+CFLAGS		= -Wextra -Wall -Werror -O2 -Ofast -g #-fsanitize=address -Wunreachable-code 
 FT_PRINTF	= ./ft_printf
 LIBFT		= ./libft
 LIBMLX		= ./MLX42
 
-HEADERS	= -I ./include -I $(LIBMLX)/include
+HEADERS	= -Iincludes -I $(LIBMLX)/include
 
 LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -pthread -lm #-L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl
 
-SRCS	= fdf_utils.c transform_map_utils.c transform_map.c transform_image.c line.c colors_utils.c line_utils.c projection.c keyhook_utils.c keyhook_handler.c keyhook_handler_two.c keyhook.c parsing_utils.c parsing.c main.c
+SOURCES = srcs/fdf_utils.c \
+			srcs/transform_map_utils.c \
+			srcs/transform_map.c \
+			srcs/transform_image.c \
+			srcs/line.c \
+			srcs/colors_utils.c \
+			srcs/line_utils.c \
+			srcs/projection.c \
+			srcs/keyhook_utils.c \
+			srcs/keyhook_handler.c \
+			srcs/keyhook_handler_two.c \
+			srcs/keyhook.c \
+			srcs/parsing_utils.c \
+			srcs/parsing.c \
+			srcs/main.c
 
-OBJS	= $(SRCS:.c=.o)
+OBJS	= $(SOURCES:.c=.o)
 
 all: $(NAME)
 
 $(LIBFT)/libft.a:
 	make -C $(LIBFT)
+	make bonus -C $(LIBFT)
 
 $(FT_PRINTF)/libftprintf.a:
 	make -C $(FT_PRINTF)

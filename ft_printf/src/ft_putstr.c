@@ -6,11 +6,11 @@
 /*   By: aapadill <aapadill@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 14:18:09 by aapadill          #+#    #+#             */
-/*   Updated: 2024/05/13 17:54:51 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:02:24 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf.h"
+#include "ft_printf.h"
 
 int	ft_putstr(const char *s, int *count)
 {

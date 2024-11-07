@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 20:33:52 by aapadill          #+#    #+#             */
-/*   Updated: 2024/05/16 12:01:31 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:01:23 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 ** number of characters printed, negative if error
 */
 
-#include "../include/ft_printf.h"
+#include "ft_printf.h"
 
 static int	ft_printf_helper(const char *c, va_list args, int *i)
 {

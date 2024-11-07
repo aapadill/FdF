@@ -6,11 +6,11 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 10:44:58 by aapadill          #+#    #+#             */
-/*   Updated: 2024/05/16 11:57:00 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:02:12 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ft_printf.h"
+#include "ft_printf.h"
 
 int	ft_putnbr_u(unsigned long n, const char *base, int *count)
 {

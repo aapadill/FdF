@@ -10,7 +10,7 @@ CFLAGS = -Wall -Wextra -Werror
 #-Wsign-conversion
 
 #Directory locations
-INC_DIR = ./include
+INC_DIR = ../includes
 SRC_DIR = ./src
 
 #Finding all .c files in src directory
