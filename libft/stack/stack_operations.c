@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:26:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/05 12:20:57 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:55:43 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,3 @@ void	push(t_stack *stack, t_node *node)
 	stack->top = node;
 	stack->size++;
 }
-

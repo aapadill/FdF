@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/03 16:28:54 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/05 17:31:20 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 18:55:58 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	init_push(int value, t_stack *stack)
 
 void	print_stack(t_stack *stack, char *name)
 {
-	t_node *node;
+	t_node	*node;
 
 	node = stack->top;
 	ft_putendl_fd(name, 1);
