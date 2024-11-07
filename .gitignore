@@ -1,3 +1,6 @@
-./*.o
-./*.a
+*.o
+*.a
 test_maps/
+fdf
+libft/.bonus
+MLX42/build

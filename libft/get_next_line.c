@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 16:02:10 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/19 16:29:48 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:22:49 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,14 @@ static char	*ft_read(int fd, char *buffer)
 	return (buffer);
 }
 
-char	*get_next_line(int fd)
+char	*get_next_line(int fd, int free_static)
 {
 	static char	*buffer[OPEN_MAX];
 	char		*line;
 
 	if (fd < 0 || fd > OPEN_MAX)
 		return (NULL);
-	if (BUFFER_SIZE < 1 || 0 > read(fd, 0, 0))
+	if (BUFFER_SIZE < 1 || 0 > read(fd, 0, 0) || free_static)
 	{
 		free(buffer[fd]);
 		buffer[fd] = NULL;

@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/29 16:13:27 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:30:20 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 		ft_perror("No file", 1);
 	while (1)
 	{
-		line = get_next_line(fd);
+		line = get_next_line(fd, READ_LINE);
 		if (!line)
 			break ;
 		validate_line(line, x, y, fd);
@@ -151,7 +151,7 @@ void	fill_cells(t_map *map, char **argv)
 		ft_perror("No file", 1);
 	while (1)
 	{
-		line = get_next_line(fd);
+		line = get_next_line(fd, READ_LINE);
 		if (!line)
 			break ;
 		fill_cells_helper(map, line, fd, y);

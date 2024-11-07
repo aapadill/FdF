@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 13:55:48 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 14:32:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	fill_cells_helper(t_map *map, char *line, int fd, int y)
 	if (!x_values)
 	{
 		close(fd);
+		get_next_line(fd, CLEAN_LINE);
 		ft_free(map->y, (void **)map->cells);
 		ft_perror("ft_split error", 1);
 	}
