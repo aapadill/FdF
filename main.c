@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/10/03 13:35:17 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:12:44 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int	main(int argc, char **argv)
 	t_map			map;
 	t_hook_params	hook_params;
 
+	map.x = 0;
 	map.y = 0;
 	if (argc != 2)
 		ft_perror("No valid arguments", 0);
