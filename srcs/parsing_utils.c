@@ -6,20 +6,11 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 14:32:59 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:45:06 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-
-/*
- * Reaches the end of an array of pointers
- */
-void	ft_reach_end(int n, void **ptr_array)
-{
-	while (ptr_array[++n])
-		;
-}
 
 /*
  * Replaces newline character and last spaces from a string with '\0'
@@ -103,13 +94,17 @@ void	init_img(t_img *img, t_map *map)
 	img->y = map->y;
 	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
 	if (!img->pixels)
+	{
+		ft_free(map->y, (void **)map->cells);
 		ft_perror("Malloc error for img->pixels", 1);
+	}
 	while (++i < img->y)
 	{
 		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
 		if (!img->pixels[i])
 		{
 			ft_free(i, (void **)img->pixels);
+			ft_free(map->y, (void **)map->cells);
 			ft_perror("Malloc error for a pixels row", 1);
 		}
 		h = -1;
