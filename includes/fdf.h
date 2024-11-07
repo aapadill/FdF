@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 12:54:34 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:08:56 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ t_cell		**init_cells(int x, int y);
 void		init_img(t_img *img, t_map *map);
 
 //parsing.c
-void		validate_values(char **values);
+void		validate_values(char **values, int n,  int fd);
 void		validate_line(char *line, int *x, int *y, int fd);
 t_cell		**validate_file(char **argv, int *x, int *y);
 void		insert_values(t_map *map, char **x_values, int y);

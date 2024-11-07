@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 14:51:26 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:39:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Checks if each of the z values has only two values (z (integer) and a color)
  * improv: Close fd if (!z)?
  */
-void	validate_values(char **values)
+void	validate_values(char **values, int n,  int fd)
 {
 	char	**z;
 	int		color;
@@ -28,15 +28,14 @@ void	validate_values(char **values)
 		z = ft_split(values[i], ',', &color);
 		if (!z)
 		{
-			ft_reach_end(i, (void **)values);
-			ft_free(i, (void **)values);
-			ft_free(map->y, (void **)map->cells);
+			get_next_line(fd, CLEAN_LINE);
+			ft_free(n, (void **)values);
 			ft_perror("Malloc error (z split)", 1);
 		}
 		if (color < 1 || color > 2 || int_overflows(z[0]))
 		{
-			ft_reach_end(i, (void **)values);
-			ft_free(i, (void **)values);
+			get_next_line(fd, CLEAN_LINE);
+			ft_free(n, (void **)values);
 			ft_free(color, (void **)z);
 			ft_perror("Values format error", 0);
 		}
@@ -61,7 +60,7 @@ void	validate_line(char *line, int *x, int *y, int fd)
 		close(fd);
 		ft_perror("Malloc error (x split)", 1);
 	}
-	validate_values(splitted_line);
+	validate_values(splitted_line, values, fd);
 	if (!*y)
 		*x = values;
 	else if (*x != values)
