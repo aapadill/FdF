@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 18:53:53 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 19:33:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ void		handle_post(mlx_key_data_t keydata, t_hook_params *hook_params);
 
 //keyhook_utils.c
 float		*parameter_finder(t_hook_params *h_p, t_axis axis);
-void		copy_map(t_map *dst, t_map *src);
+int			copy_map(t_map *dst, t_map *src);
 
 //keyhook.c
 int			display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);

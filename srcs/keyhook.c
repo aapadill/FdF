@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 19:19:14 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 19:52:07 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ int	manual(t_hook_params *h_p, t_axis axis, char sign)
 		*parameter_finder(h_p, axis) += h_p->step;
 	if (sign == '-')
 		*parameter_finder(h_p, axis) -= h_p->step;
-	copy_map(&transformed_map, h_p->map);
+	if (copy_map(&transformed_map, h_p->map) == -1)
+		return (-1);
 	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
 	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
@@ -67,10 +68,10 @@ int	manual(t_hook_params *h_p, t_axis axis, char sign)
 		ft_free(transformed_map.y, (void **)transformed_map.cells);
 		return (-1);
 	}
-	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
-		mlx_perror();
 	ft_free(img.y, (void **)img.pixels);
 	ft_free(transformed_map.y, (void **)transformed_map.cells);
+	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
+		mlx_perror();
 	return (1);
 }
 

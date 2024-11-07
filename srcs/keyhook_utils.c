@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:18:17 by aapadill          #+#    #+#             */
-/*   Updated: 2024/09/24 18:18:19 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/07 19:42:21 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
  * Copy the values from map src to map dst
  * improv: free both maps before perror
  */
-void	copy_map(t_map *dst, t_map *src)
+int	copy_map(t_map *dst, t_map *src)
 {
 	int	i;
 	int	j;
@@ -62,17 +62,22 @@ void	copy_map(t_map *dst, t_map *src)
 	dst->y = src->y;
 	dst->cells = malloc(sizeof(t_cell *) * src->y);
 	if (!dst->cells)
-		ft_perror("Malloc error (copy_map)", 1);
+	{
+		ft_putendl_fd("Malloc error (copy_map)", 2);
+		return (-1);
+	}
 	while (++i < src->y)
 	{
 		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
 		if (!dst->cells[i])
 		{
 			ft_free(i, (void **)dst->cells);
-			ft_perror("Malloc error (copy_map)", 1);
+			ft_putendl_fd("Malloc error (copy_map)", 2);
+			return (-1);
 		}
 		j = -1;
 		while (++j < src->x)
 			dst->cells[i][j] = src->cells[i][j];
 	}
+	return (1);
 }
