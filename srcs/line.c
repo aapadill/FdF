@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:58:23 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 18:43:23 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:26:14 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,13 @@ void	bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep)
 	}
 }
 
-int	put_img(mlx_image_t *mlx_img, t_img *img)
+void	put_img(mlx_image_t *mlx_img, t_img *img)
 {
 	int		j;
 	int		i;
 	float	*d;
 
-	if (init_depth(&d) == -1)
-	{
-		ft_free(img->y, (void **)img->pixels);
-		ft_putendl_fd("Malloc error (depth)", 2);
-		return (-1);
-	}
+	init_depth(&d);
 	j = -1;
 	while (++j < img->y)
 	{
@@ -91,6 +86,5 @@ int	put_img(mlx_image_t *mlx_img, t_img *img)
 				bresenham(mlx_img, img->pixels[j][i], img->pixels[j + 1][i], d);
 		}
 	}
-	free(d);
-	return (1);
+	gc_free(d);
 }

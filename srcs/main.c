@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:31:03 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 17:39:49 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:47:59 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 {
+	ft_bzero(hook_params, sizeof(t_hook_params));
 	hook_params->sx = 1;
 	hook_params->sy = 1;
 	hook_params->sz = 1;
@@ -23,14 +24,10 @@ static void	init_hook_params(t_hook_params *hook_params, t_map *map)
 	ft_printf("Rotation mode\n");
 	hook_params->mlx = mlx_init(WIDTH, HEIGHT, "fdf", true);
 	if (!hook_params->mlx)
-	{
-		ft_free(map->y, (void **)map->cells);
 		mlx_perror();
-	}
 	hook_params->mlx_img = mlx_new_image(hook_params->mlx, WIDTH, HEIGHT);
 	if (!hook_params->mlx_img)
 	{
-		ft_free(map->y, (void **)map->cells);
 		mlx_terminate(hook_params->mlx);
 		mlx_perror();
 	}
@@ -81,25 +78,26 @@ static void	normalize_map(t_map *map)
 	scale_map(map, 100, 100, 100);
 }
 
+static void	init_map_struct(int argc, char **argv, t_map *map)
+{
+	map->x = 0;
+	map->y = 0;
+	ft_bzero(&map->info, sizeof(t_map_info));
+	if (argc != 2)
+		gc_perror("No valid arguments", 0);
+	map->cells = validate_file(argv, &map->x, &map->y);
+	fill_cells(map, argv);
+	normalize_map(map);
+}
+
 int	main(int argc, char **argv)
 {
 	t_map			map;
 	t_hook_params	h_p;
 
-	map.x = 0;
-	map.y = 0;
-	if (argc != 2)
-		ft_perror("No valid arguments", 0);
-	map.cells = validate_file(argv, &map.x, &map.y);
-	fill_cells(&map, argv);
-	ft_bzero(&h_p, sizeof(h_p));
-	normalize_map(&map);
+	init_map_struct(argc, argv, &map);
 	init_hook_params(&h_p, &map);
-	if (display(h_p.mlx, &map, h_p.mlx_img, h_p.centered) == -1)
-	{
-		mlx_terminate(h_p.mlx);
-		mlx_perror();
-	}
+	display(h_p.mlx, &map, h_p.mlx_img, h_p.centered);
 	mlx_key_hook(h_p.mlx, &keyhook, &h_p);
 	mlx_loop(h_p.mlx);
 	mlx_close_hook(h_p.mlx, &close_hook, h_p.mlx);

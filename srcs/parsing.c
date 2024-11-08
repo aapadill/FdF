@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 14:40:45 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 18:52:21 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:42:58 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,20 @@ void	validate_values(char **values, int n, int fd)
 	int		i;
 
 	i = 0;
-	while (values[i])
+	while (i < n)
 	{
-		z = ft_split(values[i], ',', &color);
+		z = gc_split(values[i], ',', &color);
 		if (!z)
 		{
-			get_next_line(fd, CLEAN_LINE);
-			ft_free(n, (void **)values);
-			ft_perror("Malloc error (z split)", 1);
+			gc_next_line(fd, CLEAN_LINE);
+			gc_perror("Malloc error (z split)", 1);
 		}
 		if (color < 1 || color > 2 || int_overflows(z[0]))
 		{
-			get_next_line(fd, CLEAN_LINE);
-			ft_free(n, (void **)values);
-			ft_free(color, (void **)z);
-			ft_perror("Values format error", 0);
+			gc_next_line(fd, CLEAN_LINE);
+			gc_perror("Values format error", 0);
 		}
-		ft_free(color, (void **)z);
+		gc_free_array(color, (void **)z);
 		i++;
 	}
 }
@@ -53,12 +50,12 @@ void	validate_line(char *line, int *x, int *y, int fd)
 	int		values;
 	char	**splitted_line;
 
-	splitted_line = ft_split(clean(line), ' ', &values);
-	free(line);
+	splitted_line = gc_split(clean(line), ' ', &values);
+	gc_free(line);
 	if (!splitted_line)
 	{
 		close(fd);
-		ft_perror("Malloc error (x split)", 1);
+		gc_perror("Malloc error (x split)", 1);
 	}
 	validate_values(splitted_line, values, fd);
 	if (!*y)
@@ -66,11 +63,10 @@ void	validate_line(char *line, int *x, int *y, int fd)
 	else if (*x != values)
 	{
 		close(fd);
-		ft_free(values, (void **)splitted_line);
-		ft_perror("Map error (your file is missing some x values)", 0);
+		gc_perror("Map error (your file is missing some x values)", 0);
 	}
 	(*y)++;
-	ft_free(values, (void **)splitted_line);
+	gc_free_array(values, (void **)splitted_line);
 }
 
 /*
@@ -84,20 +80,20 @@ t_cell	**validate_file(char **argv, int *x, int *y)
 
 	file_n_size = ft_strlen(argv[1]);
 	if (file_n_size < 5 || ft_strncmp(argv[1] + file_n_size - 4, ".fdf", 4))
-		ft_perror("Invalid file extension", 0);
+		gc_perror("Invalid file extension", 0);
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-		ft_perror("No file", 1);
+		gc_perror("No file", 1);
 	while (1)
 	{
-		line = get_next_line(fd, READ_LINE);
+		line = gc_next_line(fd, READ_LINE);
 		if (!line)
 			break ;
 		validate_line(line, x, y, fd);
 	}
 	close(fd);
 	if (!*x || !*y)
-		ft_perror("Empty file", 0);
+		gc_perror("Empty file", 0);
 	return (init_cells(*x, *y));
 }
 
@@ -117,13 +113,9 @@ void	insert_values(t_map	*map, char **x_values, int y)
 	i = 0;
 	while (x_values[i])
 	{
-		z = ft_split(x_values[i], ',', &color);
+		z = gc_split(x_values[i], ',', &color);
 		if (!z)
-		{
-			ft_reach_end(i, (void **)x_values);
-			ft_free(i, (void **)x_values);
-			ft_perror("Malloc error (z split)", 1);
-		}
+			gc_perror("Malloc error (z split)", 1);
 		map->cells[y][i].x = i;
 		map->cells[y][i].y = y;
 		map->cells[y][i].z = ft_atoi(z[0]);
@@ -132,7 +124,7 @@ void	insert_values(t_map	*map, char **x_values, int y)
 		else
 			map->cells[y][i].color = 0;
 		i++;
-		ft_free(color, (void **)z);
+		gc_free_array(color, (void **)z);
 	}
 }
 
@@ -148,10 +140,10 @@ void	fill_cells(t_map *map, char **argv)
 	y = 0;
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-		ft_perror("No file", 1);
+		gc_perror("No file", 1);
 	while (1)
 	{
-		line = get_next_line(fd, READ_LINE);
+		line = gc_next_line(fd, READ_LINE);
 		if (!line)
 			break ;
 		fill_cells_helper(map, line, fd, y);

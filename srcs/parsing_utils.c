@@ -6,20 +6,11 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 17:47:20 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:39:33 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
-
-/*
- * Reaches the end of an array of pointers
- */
-void	ft_reach_end(int n, void **ptr_array)
-{
-	while (ptr_array[++n])
-		;
-}
 
 /*
  * Replaces newline character and last spaces from a string with '\0'
@@ -49,17 +40,16 @@ void	fill_cells_helper(t_map *map, char *line, int fd, int y)
 	int		x;
 	char	**x_values;
 
-	x_values = ft_split(clean(line), ' ', &x);
-	free(line);
+	x_values = gc_split(clean(line), ' ', &x);
+	gc_free(line);
 	if (!x_values)
 	{
 		close(fd);
-		get_next_line(fd, CLEAN_LINE);
-		ft_free(map->y, (void **)map->cells);
-		ft_perror("ft_split error", 1);
+		gc_next_line(fd, CLEAN_LINE);
+		gc_perror("gc_split error", 1);
 	}
 	insert_values(map, x_values, y);
-	ft_free(x, (void **)x_values);
+	gc_free_array(x, (void **)x_values);
 }
 
 /*
@@ -71,17 +61,14 @@ t_cell	**init_cells(int x, int y)
 	int		i;
 
 	i = 0;
-	cells = (t_cell **)malloc(sizeof(t_cell *) * y);
+	cells = (t_cell **)gc_alloc(sizeof(t_cell *) * y);
 	if (!cells)
-		ft_perror("Malloc error for cells", 1);
+		gc_perror("Malloc error for cells", 1);
 	while (i < y)
 	{
-		cells[i] = (t_cell *)malloc(sizeof(t_cell) * x);
+		cells[i] = (t_cell *)gc_alloc(sizeof(t_cell) * x);
 		if (!cells[i])
-		{
-			ft_free(i, (void **)cells);
-			ft_perror("Malloc error for a map row", 1);
-		}
+			gc_perror("Malloc error for a map row", 1);
 		i++;
 	}
 	return (cells);
@@ -93,7 +80,7 @@ t_cell	**init_cells(int x, int y)
  * at the end of the projection with update_img_info()
  * improv: free map, free img before perror
  */
-int	init_img(t_img *img, t_map *map)
+void	init_img(t_img *img, t_map *map)
 {
 	int	h;
 	int	i;
@@ -101,26 +88,16 @@ int	init_img(t_img *img, t_map *map)
 	i = -1;
 	img->x = map->x;
 	img->y = map->y;
-	img->pixels = (t_pixel **)malloc(sizeof(t_pixel *) * img->y);
+	img->pixels = (t_pixel **)gc_alloc(sizeof(t_pixel *) * img->y);
 	if (!img->pixels)
-	{
-		ft_free(map->y, (void **)map->cells);
-		ft_putendl_fd("Malloc error for img->pixels", 2);
-		return (-1);
-	}
+		gc_perror("Malloc error for img->pixels", 1);
 	while (++i < img->y)
 	{
-		img->pixels[i] = (t_pixel *)malloc(sizeof(t_pixel) * img->x);
+		img->pixels[i] = (t_pixel *)gc_alloc(sizeof(t_pixel) * img->x);
 		if (!img->pixels[i])
-		{
-			ft_free(i, (void **)img->pixels);
-			ft_free(map->y, (void **)map->cells);
-			ft_putendl_fd("Malloc error for a pixels row", 2);
-			return (-1);
-		}
+			gc_perror("Malloc error for a pixels row", 1);
 		h = -1;
 		while (++h < img->x)
 			img->pixels[i][h].color = map->cells[i][h].color;
 	}
-	return (0);
 }

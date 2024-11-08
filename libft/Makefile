@@ -60,6 +60,13 @@ B_SOURCES = ft_lstnew_bonus.c \
 			ft_lstiter_bonus.c \
 			ft_lstmap_bonus.c \
 			gc_alloc/gc_alloc.c \
+			gc_alloc/gc_strdup.c \
+			gc_alloc/gc_itoa.c \
+			gc_alloc/gc_next_line.c \
+			gc_alloc/gc_split.c \
+			gc_alloc/gc_strjoin.c \
+			gc_alloc/gc_substr.c \
+			gc_alloc/gc_calloc.c \
 			stack/stack_utils.c \
 			stack/stack_operations.c
 

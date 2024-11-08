@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:18:17 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/07 19:42:21 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/08 15:34:27 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 
 	ptr = NULL;
 	if (axis < x_axis || axis > no_axis)
-		ft_perror("Invalid axis", 0);
+		gc_perror("Invalid axis", 0);
 	if (h_p->transf == s_mode)
 	{
 		h_p->step = s_constant;
@@ -44,7 +44,7 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 		ptr = &h_p->tx + axis;
 	}
 	if (!ptr)
-		ft_perror("Invalid transformation mode", 0);
+		gc_perror("Invalid transformation mode", 0);
 	return (ptr);
 }
 
@@ -52,7 +52,7 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
  * Copy the values from map src to map dst
  * improv: free both maps before perror
  */
-int	copy_map(t_map *dst, t_map *src)
+void	copy_map(t_map *dst, t_map *src)
 {
 	int	i;
 	int	j;
@@ -60,24 +60,16 @@ int	copy_map(t_map *dst, t_map *src)
 	i = -1;
 	dst->x = src->x;
 	dst->y = src->y;
-	dst->cells = malloc(sizeof(t_cell *) * src->y);
+	dst->cells = gc_alloc(sizeof(t_cell *) * src->y);
 	if (!dst->cells)
-	{
-		ft_putendl_fd("Malloc error (copy_map)", 2);
-		return (-1);
-	}
+		gc_perror("Malloc error (copy_map)", 1);
 	while (++i < src->y)
 	{
-		dst->cells[i] = malloc(sizeof(t_cell) * src->x);
+		dst->cells[i] = gc_alloc(sizeof(t_cell) * src->x);
 		if (!dst->cells[i])
-		{
-			ft_free(i, (void **)dst->cells);
-			ft_putendl_fd("Malloc error (copy_map)", 2);
-			return (-1);
-		}
+			gc_perror("Malloc error (copy_map)", 1);
 		j = -1;
 		while (++j < src->x)
 			dst->cells[i][j] = src->cells[i][j];
 	}
-	return (1);
 }

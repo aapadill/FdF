@@ -1,30 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf_utils.c                                        :+:      :+:    :+:   */
+/*   gc_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/03 13:29:19 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:37:54 by aapadill         ###   ########.fr       */
+/*   Created: 2024/11/07 23:31:52 by aapadill          #+#    #+#             */
+/*   Updated: 2024/11/08 13:05:25 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "gc_alloc.h"
 
-void	mlx_perror(void)
+void	*gc_calloc(size_t count, size_t size)
 {
-	ft_putendl_fd((char *)mlx_strerror(mlx_errno), STDERR_FILENO);
-	gc_free_all();
-	exit(EXIT_FAILURE);
-}
+	void	*mem;
 
-int	gc_perror(char *error_msg, int is_syscall)
-{
-	if (is_syscall)
-		ft_putendl_fd(strerror(errno), STDERR_FILENO);
-	if (error_msg)
-		ft_putendl_fd(error_msg, STDERR_FILENO);
-	gc_free_all();
-	exit(EXIT_FAILURE);
+	if (size != 0 && ((SIZE_MAX / size) <= (count * size)))
+		return (NULL);
+	mem = gc_alloc(count * size);
+	if (!mem)
+		return (NULL);
+	ft_bzero(mem, count * size);
+	return (mem);
 }
