@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:22:20 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:39:33 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 11:13:32 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_cell	**init_cells(int x, int y)
  * at the end of the projection with update_img_info()
  * improv: free map, free img before perror
  */
-void	init_img(t_img *img, t_map *map)
+void	init_img(t_img *img, t_map *map, mlx_t *mlx)
 {
 	int	h;
 	int	i;
@@ -90,12 +90,18 @@ void	init_img(t_img *img, t_map *map)
 	img->y = map->y;
 	img->pixels = (t_pixel **)gc_alloc(sizeof(t_pixel *) * img->y);
 	if (!img->pixels)
+	{
+		mlx_terminate(mlx);
 		gc_perror("Malloc error for img->pixels", 1);
+	}
 	while (++i < img->y)
 	{
 		img->pixels[i] = (t_pixel *)gc_alloc(sizeof(t_pixel) * img->x);
 		if (!img->pixels[i])
+		{
+			mlx_terminate(mlx);
 			gc_perror("Malloc error for a pixels row", 1);
+		}
 		h = -1;
 		while (++h < img->x)
 			img->pixels[i][h].color = map->cells[i][h].color;

@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 17:25:49 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:41:57 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 11:19:19 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ int			gc_perror(char *error_msg, int is_syscall);
 char		*clean(char *line);
 void		fill_cells_helper(t_map *map, char *line, int fd, int y);
 t_cell		**init_cells(int x, int y);
-void		init_img(t_img *img, t_map *map);
+void		init_img(t_img *img, t_map *map, mlx_t *mlx);
 
 //parsing.c
 void		validate_values(char **values, int n, int fd);
@@ -190,13 +190,13 @@ void		draw_pixel(mlx_image_t *img, t_pixel *px, t_line *line, float *dep);
 void		update_line(t_line *line, t_pixel *start);
 void		update_color(t_line *line);
 void		update_depth(t_line *line, t_pixel *start);
-void		init_depth(float **depth);
+int			init_depth(float **depth);
 
 //line.c
 void		bresenham_init(t_line *line, t_pixel *start, t_pixel *end);
 void		bresenham_helper(t_line *line, t_pixel start, t_pixel end);
 void		bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep);
-void		put_img(mlx_image_t *mlx_img, t_img *img);
+int			put_img(mlx_image_t *mlx_img, t_img *img);
 
 //transform_map_utils.c
 void		update_min_max(t_map *map, int i, int j);
@@ -222,7 +222,7 @@ void		handle_post(mlx_key_data_t keydata, t_hook_params *hook_params);
 
 //keyhook_utils.c
 float		*parameter_finder(t_hook_params *h_p, t_axis axis);
-void		copy_map(t_map *dst, t_map *src);
+void		copy_map(t_map *dst, t_hook_params *h_p);
 
 //keyhook.c
 void		display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered);

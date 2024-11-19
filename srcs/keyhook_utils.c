@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:18:17 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:34:27 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 11:07:17 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,24 +52,30 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
  * Copy the values from map src to map dst
  * improv: free both maps before perror
  */
-void	copy_map(t_map *dst, t_map *src)
+void	copy_map(t_map *dst, t_hook_params *h_p)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	dst->x = src->x;
-	dst->y = src->y;
-	dst->cells = gc_alloc(sizeof(t_cell *) * src->y);
+	dst->x = h_p->map->x;
+	dst->y = h_p->map->y;
+	dst->cells = gc_alloc(sizeof(t_cell *) * h_p->map->y);
 	if (!dst->cells)
-		gc_perror("Malloc error (copy_map)", 1);
-	while (++i < src->y)
 	{
-		dst->cells[i] = gc_alloc(sizeof(t_cell) * src->x);
+		mlx_terminate(h_p->mlx);
+		gc_perror("Malloc error (copy_map)", 1);
+	}
+	while (++i < h_p->map->y)
+	{
+		dst->cells[i] = gc_alloc(sizeof(t_cell) * h_p->map->x);
 		if (!dst->cells[i])
+		{
+			mlx_terminate(h_p->mlx);
 			gc_perror("Malloc error (copy_map)", 1);
+		}
 		j = -1;
-		while (++j < src->x)
-			dst->cells[i][j] = src->cells[i][j];
+		while (++j < h_p->map->x)
+			dst->cells[i][j] = h_p->map->cells[i][j];
 	}
 }

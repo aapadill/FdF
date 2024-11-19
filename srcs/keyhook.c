@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 17:35:39 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:46:42 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 11:17:19 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 {
 	t_img	img;
+	int		flag;
 
-	init_img(&img, map);
+	init_img(&img, map, mlx);
 	project_isometric(&img, map);
 	if (centered)
 	{
@@ -30,8 +31,10 @@ void	display(mlx_t *mlx, t_map *map, mlx_image_t *mlx_img, int centered)
 	else
 		translate_img(&img, WIDTH / 2, HEIGHT / 2);
 	ft_memset(mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
-	put_img(mlx_img, &img);
+	flag = put_img(mlx_img, &img);
 	gc_free_array(img.y, (void **)img.pixels);
+	if (flag)
+		mlx_terminate(mlx);
 	if (mlx_image_to_window(mlx, mlx_img, 0, 0) < 0)
 		mlx_perror();
 }
@@ -45,22 +48,25 @@ void	manual(t_hook_params *h_p, t_axis axis, char sign)
 {
 	t_map	transformed_map;
 	t_img	img;
+	int		flag;
 
 	if (sign == '+')
 		*parameter_finder(h_p, axis) += h_p->step;
 	if (sign == '-')
 		*parameter_finder(h_p, axis) -= h_p->step;
-	copy_map(&transformed_map, h_p->map);
+	copy_map(&transformed_map, h_p);
 	scale_map(&transformed_map, h_p->sx, h_p->sy, h_p->sz);
 	rotate_map(&transformed_map, h_p->rx, h_p->ry, h_p->rz);
 	translate_map(&transformed_map, h_p->tx, h_p->ty, h_p->tz);
-	init_img(&img, &transformed_map);
+	init_img(&img, &transformed_map, h_p->mlx);
 	project(&img, &transformed_map, h_p->projec);
 	post_transform(&img, h_p);
 	ft_memset(h_p->mlx_img->pixels, 0, CANVAS_SIZE * sizeof(int32_t));
-	put_img(h_p->mlx_img, &img);
+	flag = put_img(h_p->mlx_img, &img);
 	gc_free_array(img.y, (void **)img.pixels);
 	gc_free_array(transformed_map.y, (void **)transformed_map.cells);
+	if (flag)
+		mlx_terminate(h_p->mlx);
 	if (mlx_image_to_window(h_p->mlx, h_p->mlx_img, 0, 0) < 0)
 		mlx_perror();
 }

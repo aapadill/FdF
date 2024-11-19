@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 11:58:23 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/08 15:26:14 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 10:39:45 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,14 @@ void	bresenham(mlx_image_t *img, t_pixel start, t_pixel end, float *dep)
 	}
 }
 
-void	put_img(mlx_image_t *mlx_img, t_img *img)
+int	put_img(mlx_image_t *mlx_img, t_img *img)
 {
 	int		j;
 	int		i;
 	float	*d;
 
-	init_depth(&d);
+	if (!init_depth(&d))
+		return (1);
 	j = -1;
 	while (++j < img->y)
 	{
@@ -87,4 +88,5 @@ void	put_img(mlx_image_t *mlx_img, t_img *img)
 		}
 	}
 	gc_free(d);
+	return (0);
 }
