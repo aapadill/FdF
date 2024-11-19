@@ -6,7 +6,7 @@
 /*   By: aapadill <aapadill@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 18:18:17 by aapadill          #+#    #+#             */
-/*   Updated: 2024/11/19 11:07:17 by aapadill         ###   ########.fr       */
+/*   Updated: 2024/11/19 11:30:14 by aapadill         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 	float	*ptr;
 
 	ptr = NULL;
-	if (axis < x_axis || axis > no_axis)
-		gc_perror("Invalid axis", 0);
 	if (h_p->transf == s_mode)
 	{
 		h_p->step = s_constant;
@@ -43,8 +41,6 @@ float	*parameter_finder(t_hook_params	*h_p, t_axis axis)
 		h_p->step = t_pixels;
 		ptr = &h_p->tx + axis;
 	}
-	if (!ptr)
-		gc_perror("Invalid transformation mode", 0);
 	return (ptr);
 }
 
