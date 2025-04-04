@@ -15,7 +15,9 @@
 
 ## Screenshots
 
-![FdF Demo](assets/demo.gif)
+![Rotation demo](assets/demo.gif)
+![Scale demo](assets/demo-two.gif)
+
 ---
 
 ## Dependencies
