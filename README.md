@@ -15,6 +15,7 @@
 
 ## Screenshots
 
+![FdF Demo](assets/demo.gif)
 ---
 
 ## Dependencies
