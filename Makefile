@@ -1,13 +1,13 @@
 NAME		= fdf
 CC			= cc
-CFLAGS		= -Wextra -Wall -Werror -O2 -Ofast -g #-fsanitize=address -Wunreachable-code 
+CFLAGS		= -Wextra -Wall -Werror -O2 -Ofast #-g -fsanitize=address -Wunreachable-code 
 FT_PRINTF	= ./ft_printf
 LIBFT		= ./libft
 LIBMLX		= ./MLX42
 
 HEADERS	= -Iincludes -I $(LIBMLX)/include
 
-LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -pthread -lm #-L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl
+LIBS	= $(LIBMLX)/build/libmlx42.a -lglfw -pthread -lm -L"/opt/homebrew/Cellar/glfw/3.4/lib/" #-ldl
 
 SOURCES = srcs/fdf_utils.c \
 			srcs/transform_map_utils.c \
